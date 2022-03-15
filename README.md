@@ -2,6 +2,7 @@
 
 # LunaUI
 
+[![C#](https://img.shields.io/badge/.NET-6.0-blue)](#)
 [![License](https://img.shields.io/static/v1?label=LICENSE&message=GNU%20GPLv3&color=lightrey)](./blob/main/LICENSE)
 
 A structured image generator for your bots with an editor.
