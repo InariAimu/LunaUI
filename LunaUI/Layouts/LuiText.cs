@@ -1,72 +1,56 @@
 ﻿using System.ComponentModel;
 using System.Drawing;
 using System.Drawing.Drawing2D;
-using System.Xml.Serialization;
+
+using Newtonsoft.Json;
 
 namespace LunaUI
 {
     public enum TextRenderMode
     {
-        Default, CharWise
+        /// <summary>
+        /// String is rendered as a whole block.
+        /// </summary>
+        Default,
+
+        /// <summary>
+        /// String is rendered charwisely. Adjust <see cref="LuiText.Kerning"/> to control distance between characters.
+        /// </summary>
+        CharWise
     }
 
+    /// <summary>
+    /// A layout for text rendering.
+    /// </summary>
+    [Serializable]
     public class LuiText : LuiLayout
     {
-        static readonly Dictionary<char, Dictionary<char, float>> CharSpacing = new();
-
-        static LuiText()
-        {
-            // todo: sept this into font config file
-            CharSpacing['0'] = new();
-            CharSpacing['0']['1'] = 0.7f;
-            CharSpacing['1'] = new();
-            CharSpacing['1']['0'] = 0.75f;
-            CharSpacing['1']['1'] = 0.4f;
-            CharSpacing['1']['2'] = 0.7f;
-            CharSpacing['1']['3'] = 0.6f;
-            CharSpacing['1']['4'] = 0.7f;
-            CharSpacing['1']['5'] = 0.7f;
-            CharSpacing['1']['6'] = 0.7f;
-            CharSpacing['1']['7'] = 0.7f;
-            CharSpacing['1']['8'] = 0.7f;
-            CharSpacing['1']['9'] = 0.7f;
-            CharSpacing['1']['\''] = 0.7f;
-            CharSpacing['2'] = new();
-            CharSpacing['2']['4'] = 0.7f;
-            CharSpacing['4'] = new();
-            CharSpacing['4']['1'] = 0.8f;
-            CharSpacing['4']['9'] = 0.9f;
-            CharSpacing['7'] = new();
-            CharSpacing['7']['5'] = 0.9f;
-            CharSpacing['7']['6'] = 0.8f;
-            CharSpacing['9'] = new();
-            CharSpacing['9']['4'] = 0.9f;
-            CharSpacing['9']['5'] = 0.9f;
-            CharSpacing['9']['6'] = 0.9f;
-            CharSpacing['9']['7'] = 0.9f;
-            CharSpacing['\''] = new();
-            CharSpacing['\'']['0'] = 0.7f;
-            CharSpacing['\'']['1'] = 0.6f;
-            CharSpacing['\'']['2'] = 0.7f;
-            CharSpacing['\'']['3'] = 0.7f;
-            CharSpacing['\'']['4'] = 0.7f;
-            CharSpacing['\'']['5'] = 0.7f;
-            CharSpacing['\'']['6'] = 0.7f;
-            CharSpacing['\'']['7'] = 0.7f;
-            CharSpacing['\'']['8'] = 0.7f;
-            CharSpacing['\'']['9'] = 0.7f;
-        }
-
+        /// <summary>
+        /// Use as a placeholder for text in LuiEditor. Use this in your app to set text is not recommended.
+        /// For app use, use <see cref="LuiText.Text"/> instead.
+        /// </summary>
+        [JsonProperty("placeholder")]
         public string PlaceHolder { get; set; } = "";
 
+        [JsonProperty("text_render_mode")]
         public TextRenderMode TextRenderMode { get; set; } = TextRenderMode.Default;
 
-        public float Kerning { get; set; } = 1f;
+        /// <summary>
+        /// Controls distance between characters.
+        /// Takes effect when <see cref="LuiText.TextRenderMode"/> is setted to <see cref="TextRenderMode.CharWise"/>.
+        /// </summary>
+        [JsonProperty("kerning")] public float Kerning { get; set; } = 1f;
 
-        [XmlIgnore, Category("Font")]
+        [JsonIgnore]
+        [Category("Font")]
         private Font? _font;
 
-        [XmlIgnore, Category("Font")]
+        /// <summary>
+        /// Used by ProperyGrid to set font values graphically in LuiEditor.
+        /// DO NOT set this manually.
+        /// </summary>
+        [JsonIgnore]
+        [Category("Font")]
         public Font FontSet
         {
             get => _font;
@@ -79,57 +63,96 @@ namespace LunaUI
             }
         }
 
+        /// <summary>
+        /// Font name. When not sure what name to use, please set it in LuiEdior by FontSet Property.
+        /// </summary>
+        [JsonProperty("font_name")]
         [Category("Font")]
         public string Font { get; set; } = "Exo";
 
+        [JsonProperty("font_pixel_size")]
         [Category("Font")]
         public float FontSize { get; set; } = 10f;
 
+        [JsonProperty("font_style")]
         [Category("Font")]
         public FontStyle FontStyle { get; set; } = FontStyle.Regular;
 
-        [XmlElement, Browsable(false)]
+        [JsonIgnore]
+        [Browsable(false)]
         public int _color { get; set; } = Color.Black.ToArgb();
 
-        [XmlIgnore]
+        /// <summary>
+        /// Text color.
+        /// </summary>
+        [JsonProperty("text_color")]
+        [JsonConverter(typeof(JsonConverters.ColorConverter))]
         public Color Color
         {
             get => Color.FromArgb(_color);
             set => _color = value.ToArgb();
         }
+
+        [JsonProperty("text_align_horizontal")]
         public StringAlignment Align { get; set; } = StringAlignment.Near;
+
+        [JsonProperty("text_align_vertical")]
         public StringAlignment LineAlign { get; set; } = StringAlignment.Near;
+
+        [JsonProperty("shade_enabled")]
         public bool HasShade { get; set; } = false;
 
-        [XmlElement, Browsable(false)]
+        [JsonIgnore]
+        [Browsable(false)]
         public int _shadeColor { get; set; } = 0;
 
-        [XmlIgnore]
+        [JsonProperty("shade_color")]
+        [JsonConverter(typeof(JsonConverters.ColorConverter))]
         public Color ShadeColor
         {
             get => Color.FromArgb(_shadeColor);
             set => _shadeColor = value.ToArgb();
         }
+
+        [JsonProperty("shade_offset")]
         public float ShadeDisplacement { get; set; } = 1.0f;
+
+        [JsonProperty("shade_size")]
         public float ShadeSize { get; set; } = 1.0f;
 
+        [JsonProperty("border_enabled")]
         public bool HasBorder { get; set; } = false;
 
-        [XmlElement, Browsable(false)]
+        [JsonIgnore]
+        [Browsable(false)]
         public int _borderColor { get; set; } = 0;
 
-        [XmlIgnore]
+        [JsonProperty("border_color")]
+        [JsonConverter(typeof(JsonConverters.ColorConverter))]
         public Color BorderColor
         {
             get => Color.FromArgb(_borderColor);
             set => _borderColor = value.ToArgb();
         }
+
+        [JsonProperty("border_offset")]
         public float BorderDisplacement { get; set; } = 1.0f;
 
+        /// <summary>
+        /// <see cref="LuiLayout.Size"/> is set by <see cref="LuiText.PlaceHolder"/> string rectangle when enabled.
+        /// </summary>
+        [JsonProperty("auto_size_by_placeholder")]
         public bool SetSizeByPlaceholder { get; set; } = false;
 
-        [XmlIgnore, Browsable(false)]
+        /// <summary>
+        /// When render result image, please set this instead of <see cref="LuiText.PlaceHolder"/>
+        /// </summary>
+        [JsonIgnore]
+        [Browsable(false)]
         public string? Text { get; set; } = null;
+
+        [JsonIgnore]
+        private TextKerningConfig? textKerningCfg = null;
 
         public LuiText()
         {
@@ -139,21 +162,30 @@ namespace LunaUI
         public override void Render(Graphics g, RenderOption op)
         {
             if (!Visible)
+            {
                 return;
+            }
 
-            float x = op.CanvasLocation.X + op.CanvasSize.Width * Docking.X + ((Docking.X < 1 ? 1 : -1) * Position.X) - Size.Width * Pivot.X;
-            float y = op.CanvasLocation.Y + op.CanvasSize.Height * Docking.Y + ((Docking.Y < 1 ? 1 : -1) * Position.Y) - Size.Height * Pivot.Y;
+            float x = op.CanvasLocation.X + op.CanvasSize.Width * Docking.X + Position.X - Size.Width * Pivot.X;
+            float y = op.CanvasLocation.Y + op.CanvasSize.Height * Docking.Y + Position.Y - Size.Height * Pivot.Y;
 
             Font f = new(Font, FontSize, FontStyle, GraphicsUnit.Pixel);
             if (SetSizeByPlaceholder)
+            {
                 AutoSetSizeByPlaceholder(g, f);
+            }
 
             SolidBrush b = new(Color);
             StringFormat sf = new();
             sf.Alignment = Align;
             sf.LineAlignment = LineAlign;
 
-            string temp_str = string.IsNullOrEmpty(Text) ? PlaceHolder : Text;
+            string temp_str = Text ?? PlaceHolder;
+
+            if (TextRenderMode == TextRenderMode.CharWise)
+            {
+                textKerningCfg = op.TextKerningConfig;
+            }
 
             if (HasShade)
             {
@@ -175,20 +207,30 @@ namespace LunaUI
                     float sy = y;
 
                     if (Align == StringAlignment.Center)
+                    {
                         sx = x + Size.Width / 2 - str_size.Width / 2;
+                    }
                     else if (Align == StringAlignment.Far)
+                    {
                         sx = x + Size.Width - str_size.Width;
+                    }
 
                     if (LineAlign == StringAlignment.Center)
+                    {
                         sy = y + Size.Height / 2 - str_size.Height / 2;
+                    }
                     else if (LineAlign == StringAlignment.Far)
+                    {
                         sy = y + Size.Height - str_size.Height;
+                    }
 
                     CharWiseAddToPath(g, p_s, temp_str, f, b, sx + ShadeDisplacement, sy + ShadeDisplacement, Kerning);
                 }
 
                 if (ShadeSize > 1)
+                {
                     g.DrawPath(new Pen(b, ShadeSize), p_s);
+                }
 
                 g.FillPath(b, p_s);
             }
@@ -214,14 +256,22 @@ namespace LunaUI
                     float sy = y;
 
                     if (Align == StringAlignment.Center)
+                    {
                         sx = x + Size.Width / 2 - str_size.Width / 2;
+                    }
                     else if (Align == StringAlignment.Far)
+                    {
                         sx = x + Size.Width - str_size.Width;
+                    }
 
                     if (LineAlign == StringAlignment.Center)
+                    {
                         sy = y + Size.Height / 2 - str_size.Height / 2;
+                    }
                     else if (LineAlign == StringAlignment.Far)
+                    {
                         sy = y + Size.Height - str_size.Height;
+                    }
 
                     CharWiseAddToPath(g, p, temp_str, f, b, sx, sy, Kerning);
                 }
@@ -243,14 +293,22 @@ namespace LunaUI
                 float sy = y;
 
                 if (Align == StringAlignment.Center)
+                {
                     sx = x + Size.Width / 2 - size.Width / 2;
+                }
                 else if (Align == StringAlignment.Far)
+                {
                     sx = x + Size.Width - size.Width;
+                }
 
                 if (LineAlign == StringAlignment.Center)
+                {
                     sy = y + Size.Height / 2 - size.Height / 2;
+                }
                 else if (LineAlign == StringAlignment.Far)
+                {
                     sy = y + Size.Height - size.Height;
+                }
 
                 CharWiseDrawString(g, temp_str, f, b, sx, sy, Kerning);
             }
@@ -275,17 +333,27 @@ namespace LunaUI
             }
         }
 
-        public static float GetSpacing(char c1, char c2)
+        public float GetSpacing(char c1, char c2)
         {
-            if (CharSpacing.TryGetValue(c1, out Dictionary<char, float>? r))
+            if (textKerningCfg is null)
             {
-                if (r.TryGetValue(c2, out float f))
-                    return f;
+                return 1;
+            }
+
+            if (textKerningCfg.TextKerning.TryGetValue(Font, out var font_conf))
+            {
+                if (font_conf.TryGetValue(c1, out var char_spacing))
+                {
+                    if (char_spacing.TryGetValue(c2, out float f))
+                    {
+                        return f;
+                    }
+                }
             }
             return 1;
         }
 
-        public static void CharWiseAddToPath(Graphics g, GraphicsPath p, string s, Font f, Brush b, float x, float y, float kerning)
+        public void CharWiseAddToPath(Graphics g, GraphicsPath p, string s, Font f, Brush b, float x, float y, float kerning)
         {
             char[] ch = s.ToCharArray();
             float sw = 0;
@@ -305,7 +373,7 @@ namespace LunaUI
             }
         }
 
-        public static void CharWiseDrawString(Graphics g, string s, Font f, Brush b, float x, float y, float kerning)
+        public void CharWiseDrawString(Graphics g, string s, Font f, Brush b, float x, float y, float kerning)
         {
             char[] ch = s.ToCharArray();
             float sw = 0;
@@ -323,7 +391,7 @@ namespace LunaUI
             }
         }
 
-        public static Size MeasureString(Graphics g, string s, Font f, float kerning)
+        public Size MeasureString(Graphics g, string s, Font f, float kerning)
         {
             char[] ch = s.ToCharArray();
             float sw = 0;

@@ -1,47 +1,80 @@
 ﻿
 using System.ComponentModel;
 using System.Drawing;
-using System.Xml.Serialization;
+
+using Newtonsoft.Json;
+using Newtonsoft.Json.Serialization;
 
 namespace LunaUI
 {
+    /// <summary>
+    /// Base class for all Layouts.
+    /// Also used as an empty layout.
+    /// </summary>
     [Serializable]
-    [XmlInclude(typeof(LuiImage))]
-    [XmlInclude(typeof(LuiText))]
-    [XmlInclude(typeof(LuiColorLayer))]
-    [XmlInclude(typeof(LuiListLayout))]
     public class LuiLayout
     {
+        /// <summary>
+        /// Layout object name.
+        /// </summary>
+        [JsonProperty("name")]
         [Category("Layout")]
         public string Name { get; set; } = "";
-        
-        [Category("Layout")]
-        public bool Visible { get; set; } = true;
 
+        /// <summary>
+        /// Relative position of layout to it's parent layout.
+        /// </summary>
+        [JsonProperty("position")]
         [Category("Layout")]
         public Point Position { get; set; }
 
+        /// <summary>
+        /// Pivot of this layout for positioning.<br/>
+        /// (0, 0) for topleft, (1, 0) for topright, (0.5, 0.5) for center.
+        /// </summary>
+        [JsonProperty("pivot")]
+        [JsonConverter(typeof(JsonConverters.PointFConverter))]
         [Category("Layout"), TypeConverter(typeof(PointFConverter))]
         public PointF Pivot { get; set; }
 
-        [Category("Layout")]
-        public Size Size { get; set; }
-
+        /// <summary>
+        /// Percent position relative to parent layout.<br/>
+        /// For example, <see cref="Pivot"/>(0.5, 0.5) and <see cref="Docking"/>(0.5, 0.5) will put this layout
+        /// at center location in parent layout.
+        /// </summary>
+        [JsonProperty("docking")]
+        [JsonConverter(typeof(JsonConverters.PointFConverter))]
         [Category("Layout"), TypeConverter(typeof(PointFConverter))]
         public PointF Docking { get; set; }
 
+        /// <summary>
+        /// Layout size in pixels.
+        /// </summary>
+        [JsonProperty("size")]
+        [Category("Layout")]
+        public Size Size { get; set; }
+
+        [JsonProperty("visible")]
+        [Category("Layout")]
+        public bool Visible { get; set; } = true;
+
+        [JsonProperty("auto_size_x")]
         [Category("Experimental")]
-        public bool XAutoSize { get; set; } = false;
+        public bool AutoSizeX { get; set; } = false;
 
+        [JsonProperty("auto_size_y")]
         [Category("Experimental")]
-        public bool YAutoSize { get; set; } = false;
+        public bool AutoSizeY { get; set; } = false;
 
-        public List<LuiLayout> Childs { get; set; } = new List<LuiLayout>();
+        [JsonProperty("sub_layouts")]
+        public List<LuiLayout> SubLayouts { get; set; } = new List<LuiLayout>();
 
-        [XmlIgnore, Browsable(false)]
+        [JsonIgnore]
+        [Browsable(false)]
         public bool ShowLayoutRect { get; set; } = false;
 
-        [XmlIgnore, Browsable(false)]
+        [JsonIgnore]
+        [Browsable(false)]
         public LuiLayout? Parent { get; set; } = null;
 
         public LuiLayout()
@@ -51,7 +84,7 @@ namespace LunaUI
 
         public virtual void Init(RenderOption op)
         {
-            foreach (var child in Childs)
+            foreach (var child in SubLayouts)
             {
                 child.Init(op);
             }
@@ -62,8 +95,8 @@ namespace LunaUI
             if (!Visible)
                 return;
 
-            float x = op.CanvasLocation.X + op.CanvasSize.Width * Docking.X + ((Docking.X < 1 ? 1 : -1) * Position.X) - Size.Width * Pivot.X;
-            float y = op.CanvasLocation.Y + op.CanvasSize.Height * Docking.Y + ((Docking.Y < 1 ? 1 : -1) * Position.Y) - Size.Height * Pivot.Y;
+            float x = op.CanvasLocation.X + op.CanvasSize.Width * Docking.X + Position.X - Size.Width * Pivot.X;
+            float y = op.CanvasLocation.Y + op.CanvasSize.Height * Docking.Y + Position.Y - Size.Height * Pivot.Y;
 
             RenderOption next = (RenderOption)op.Clone();
             next.SetRect((int)x, (int)y, Size.Width, Size.Height);
@@ -77,15 +110,15 @@ namespace LunaUI
             if (!Visible)
                 return null;
 
-            float x = op.CanvasLocation.X + op.CanvasSize.Width * Docking.X + ((Docking.X < 1 ? 1 : -1) * Position.X) - Size.Width * Pivot.X;
-            float y = op.CanvasLocation.Y + op.CanvasSize.Height * Docking.Y + ((Docking.Y < 1 ? 1 : -1) * Position.Y) - Size.Height * Pivot.Y;
+            float x = op.CanvasLocation.X + op.CanvasSize.Width * Docking.X + Position.X - Size.Width * Pivot.X;
+            float y = op.CanvasLocation.Y + op.CanvasSize.Height * Docking.Y + Position.Y - Size.Height * Pivot.Y;
 
             RenderOption next = (RenderOption)op.Clone();
             next.SetRect((int)x, (int)y, Size.Width, Size.Height);
 
-            for (int i = Childs.Count - 1; i >= 0; i--)
+            for (int i = SubLayouts.Count - 1; i >= 0; i--)
             {
-                var child = Childs[i];
+                var child = SubLayouts[i];
                 LuiLayout? layout = child.GetByPoint(sx, sy, next);
                 if (layout != null)
                     return layout;
@@ -111,7 +144,7 @@ namespace LunaUI
 
         public void RenderChilds(Graphics g, RenderOption op)
         {
-            foreach (var child in Childs)
+            foreach (var child in SubLayouts)
             {
                 child.SetParent(this);
                 child.Render(g, op);

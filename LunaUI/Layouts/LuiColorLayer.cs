@@ -1,15 +1,18 @@
 ﻿using System.ComponentModel;
 using System.Drawing;
-using System.Xml.Serialization;
+
+using Newtonsoft.Json;
 
 namespace LunaUI
 {
+    [Serializable]
     public class LuiColorLayer : LuiLayout
     {
-        [XmlElement, Browsable(false)]
+        [JsonProperty("color")]
+        [Browsable(false)]
         public int _color { get; set; } = Color.Black.ToArgb();
 
-        [XmlIgnore]
+        [JsonIgnore]
         public Color Color
         {
             get => Color.FromArgb(_color);
@@ -24,10 +27,12 @@ namespace LunaUI
         public override void Render(Graphics g, RenderOption op)
         {
             if (!Visible)
+            {
                 return;
+            }
 
-            float x = op.CanvasLocation.X + op.CanvasSize.Width * Docking.X + ((Docking.X < 1 ? 1 : -1) * Position.X) - Size.Width * Pivot.X;
-            float y = op.CanvasLocation.Y + op.CanvasSize.Height * Docking.Y + ((Docking.Y < 1 ? 1 : -1) * Position.Y) - Size.Height * Pivot.Y;
+            float x = op.CanvasLocation.X + op.CanvasSize.Width * Docking.X + Position.X - Size.Width * Pivot.X;
+            float y = op.CanvasLocation.Y + op.CanvasSize.Height * Docking.Y + Position.Y - Size.Height * Pivot.Y;
 
             g.FillRectangle(new SolidBrush(Color), Rectangle.FromLTRB((int)x, (int)y, (int)x + Size.Width, (int)y + Size.Height));
 

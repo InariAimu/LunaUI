@@ -1,11 +1,17 @@
 ﻿
 using LunaUI;
 
+using Newtonsoft.Json;
+
 namespace LunaEdit
 {
     public partial class Editor : Form
     {
         LunaUI.LunaUI? uiObject = null;
+        UserConfig? userConfig = null;
+
+        object? selectedNode;
+        string curr_file_path = "";
 
         public Editor()
         {
@@ -16,26 +22,35 @@ namespace LunaEdit
         {
             contextMenuStrip1.Items.Clear();
 
-            contextMenuStrip1.Items.Add(new ToolStripButton("Add Empty", null, new EventHandler((s, e) => { Add<LunaUI.ControlBase>(); })));
-            contextMenuStrip1.Items.Add(new ToolStripButton("Add Image", null, new EventHandler((s, e) => { Add<LunaUI.LuiImage>(); })));
-            contextMenuStrip1.Items.Add(new ToolStripButton("Add Text", null, new EventHandler((s, e) => { Add<LunaUI.LuiText>(); })));
-            contextMenuStrip1.Items.Add(new ToolStripButton("Add ColorLayer", null, new EventHandler((s, e) => { Add<LunaUI.LuiColorLayer>(); })));
+            contextMenuStrip1.Items.Add(new ToolStripMenuItem("Add Empty", null, new EventHandler((s, e) => { Add<LunaUI.LuiLayout>(); })));
+            contextMenuStrip1.Items.Add(new ToolStripMenuItem("Add Image", null, new EventHandler((s, e) => { Add<LunaUI.LuiImage>(); })));
+            contextMenuStrip1.Items.Add(new ToolStripMenuItem("Add Text", null, new EventHandler((s, e) => { Add<LunaUI.LuiText>(); })));
+            contextMenuStrip1.Items.Add(new ToolStripMenuItem("Add ColorLayer", null, new EventHandler((s, e) => { Add<LunaUI.LuiColorLayer>(); })));
+            contextMenuStrip1.Items.Add(new ToolStripMenuItem("Add ListLayout", null, new EventHandler((s, e) => { Add<LunaUI.LuiListLayout>(); })));
 
             contextMenuStrip1.Items.Add(new ToolStripSeparator());
 
-            contextMenuStrip1.Items.Add(new ToolStripButton("Delete", null, new EventHandler(OnDeleteNode)));
+            contextMenuStrip1.Items.Add(new ToolStripMenuItem("Delete", null, new EventHandler(OnDeleteNode)));
 
-            option.WorkPath = @"E:\gitlab\aimubot\bot_shared_data\";
-            option.CanvasSize = new Size(100, 100);
+
+            if (new FileInfo("config.json").Exists)
+            {
+                string js = File.ReadAllText("config.json");
+                userConfig = JsonConvert.DeserializeObject<UserConfig>(js);
+            }
+        }
+
+        private void Editor_Shown(object sender, EventArgs e)
+        {
         }
 
         private void OnDeleteNode(object? sender, EventArgs e)
         {
-            var t = selectedNode as ControlBase;
+            var t = selectedNode as LuiLayout;
             if (t.Parent != null)
             {
                 selectedNode = t.Parent;
-                t.Parent.Childs.Remove(t);
+                t.Parent.SubLayouts.Remove(t);
 
                 _needToRebuildTree = true;
                 UpdateUI();
@@ -46,22 +61,22 @@ namespace LunaEdit
         {
         }
 
-        private void 新建Lui界面ToolStripMenuItem_Click(object sender, EventArgs e)
+        private void NewLuiToolStripMenuItem_Click(object sender, EventArgs e)
         {
             if (uiObject == null)
-                uiObject = new();
+            {
+                uiObject = new(userConfig.WorkPath);
+            }
 
             uiObject.New();
-            uiObject.Option = option;
 
-            uiObject.Root.Name = "Root";
-            uiObject.Root.Size = new Size(100, 100);
-            this.propertyGrid1.SelectedObject = uiObject.Root;
+            uiObject.Root.Root.Name = "Root";
+            uiObject.Root.Root.Size = new Size(100, 100);
+            propertyGrid1.SelectedObject = uiObject.Root.Root;
 
+            _needToRebuildTree = true;
             UpdateUI();
         }
-
-        object? selectedNode;
 
         private void treeView1_NodeMouseClick(object sender, TreeNodeMouseClickEventArgs e)
         {
@@ -69,18 +84,28 @@ namespace LunaEdit
             {
                 if (selectedNode != null)
                 {
-                    (selectedNode as ControlBase).ShowLayoutRect = false;
+                    (selectedNode as LuiLayout).ShowLayoutRect = false;
                 }
 
                 selectedNode = e.Node.Tag;
-                (selectedNode as ControlBase).ShowLayoutRect = true;
-                this.propertyGrid1.SelectedObject = selectedNode;
+                (selectedNode as LuiLayout).ShowLayoutRect = true;
+                propertyGrid1.SelectedObject = selectedNode;
 
                 UpdatePictureBox();
             }
             else if (e.Button == MouseButtons.Right)
             {
-                contextMenuStrip1.Show(this.Location.X + treeView1.Location.X + e.X, this.Location.Y + treeView1.Location.Y + e.Y + 25);
+                if (selectedNode != null)
+                {
+                    (selectedNode as LuiLayout).ShowLayoutRect = false;
+                }
+
+                selectedNode = e.Node.Tag;
+                (selectedNode as LuiLayout).ShowLayoutRect = true;
+                propertyGrid1.SelectedObject = selectedNode;
+
+                treeView1.SelectedNode = e.Node;
+                contextMenuStrip1.Show(Location.X + treeView1.Location.X + e.X + 8, Location.Y + treeView1.Location.Y + e.Y + 55);
             }
         }
 
@@ -88,7 +113,6 @@ namespace LunaEdit
         {
             int x = hScrollBar1.Value;
             int y = vScrollBar1.Value;
-            Image i = pictureBox1.Image;
             pictureBox1.Location = new Point(picbox_location.X - x, picbox_location.Y - y);
         }
 
@@ -101,45 +125,45 @@ namespace LunaEdit
 
         private void propertyGrid1_PropertyValueChanged(object s, PropertyValueChangedEventArgs e)
         {
-            option.CanvasSize = uiObject.Root.Size;
+            uiObject.Root.Option.CanvasSize = uiObject.Root.Root.Size;
             UpdateUI();
         }
 
-        private void 设置ToolStripMenuItem_Click(object sender, EventArgs e)
+        private void SettingsToolStripMenuItem_Click(object sender, EventArgs e)
         {
             OptionFrm optionFrm = new OptionFrm();
-            optionFrm.option = option;
+            optionFrm.option = uiObject.Root.Option;
             optionFrm.ShowDialog();
         }
 
-        private void 打开ImageToolStripMenuItem_Click(object sender, EventArgs e)
+        private void OpenImageToolStripMenuItem_Click(object sender, EventArgs e)
         {
             if (selectedNode is LunaUI.LuiImage img)
             {
                 OpenFileDialog ofd = new OpenFileDialog();
-                ofd.Filter = "所有文件|*.*";
-                ofd.InitialDirectory = option.WorkPath;
+                ofd.Filter = "All Files|*.*";
+                ofd.InitialDirectory = userConfig.WorkPath;
                 ofd.Multiselect = false;
                 if (ofd.ShowDialog() == DialogResult.OK)
                 {
-                    img.ImgPath = ofd.FileName[uiObject.Option.WorkPath.Length..];
+                    img.ImgPath = ofd.FileName[uiObject.Root.Option.WorkPath.Length..];
                 }
             }
             UpdateUI();
         }
 
-        private void 打开ToolStripMenuItem_Click(object sender, EventArgs e)
+        private void OpenLuiToolStripMenuItem_Click(object sender, EventArgs e)
         {
             OpenFileDialog ofd = new OpenFileDialog();
-            ofd.Filter = "UI文件|*.xml";
-            ofd.InitialDirectory = option.WorkPath;
+            ofd.Filter = "Lui File|*.json";
+            ofd.InitialDirectory = userConfig.WorkPath;
             ofd.Multiselect = false;
             if (ofd.ShowDialog() == DialogResult.OK)
             {
-                uiObject = new();
-                uiObject.Option = option;
-                uiObject.LoadFromFile(ofd.FileName);
-                option.CanvasSize = uiObject.Root.Size;
+                uiObject = new LunaUI.LunaUI(userConfig.WorkPath);
+                uiObject.LoadFromJson(ofd.FileName);
+                uiObject.Root.Option.CanvasSize = uiObject.Root.Root.Size;
+                uiObject.Root.Option.WorkPath = userConfig.WorkPath;
                 curr_file_path = ofd.FileName;
 
                 _needToRebuildTree = true;
@@ -147,51 +171,98 @@ namespace LunaEdit
             }
         }
 
-        string curr_file_path = "";
-
-        private void 保存ToolStripMenuItem_Click(object sender, EventArgs e)
+        private void SaveToolStripMenuItem_Click(object sender, EventArgs e)
         {
             if (curr_file_path != "")
             {
-                uiObject.SaveToFile(curr_file_path);
+                uiObject.SaveToJson(curr_file_path);
             }
             else
             {
                 SaveFileDialog sfd = new SaveFileDialog();
-                sfd.Filter = "UI文件|*.xml";
-                sfd.InitialDirectory = option.WorkPath;
+                sfd.Filter = "Lui File|*.json";
+                sfd.InitialDirectory = userConfig.WorkPath;
                 if (sfd.ShowDialog() == DialogResult.OK)
                 {
-                    uiObject.SaveToFile(sfd.FileName);
+                    uiObject.SaveToJson(sfd.FileName);
                     curr_file_path = sfd.FileName;
                     UpdateUI();
                 }
             }
         }
 
-        private void 另存为ToolStripMenuItem_Click(object sender, EventArgs e)
+        private void SaveAsToolStripMenuItem_Click(object sender, EventArgs e)
         {
             SaveFileDialog sfd = new SaveFileDialog();
-            sfd.Filter = "UI文件|*.xml";
-            sfd.InitialDirectory = option.WorkPath;
+            sfd.Filter = "Lui File|*.json";
+            sfd.InitialDirectory = userConfig.WorkPath;
             if (sfd.ShowDialog() == DialogResult.OK)
             {
-                uiObject.SaveToFile(sfd.FileName);
+                uiObject.SaveToJson(sfd.FileName);
                 curr_file_path = sfd.FileName;
                 UpdateUI();
             }
         }
 
-        private void 保存图片ToolStripMenuItem_Click(object sender, EventArgs e)
+        private void ExportImageToolStripMenuItem_Click(object sender, EventArgs e)
         {
             SaveFileDialog sfd = new SaveFileDialog();
-            sfd.Filter = "图片|*.jpg";
-            sfd.InitialDirectory = option.WorkPath;
+            sfd.Filter = "Image|*.jpg,*.png";
+            sfd.InitialDirectory = userConfig.WorkPath;
             if (sfd.ShowDialog() == DialogResult.OK)
             {
                 Image im = uiObject.Render();
                 im.Save(sfd.FileName);
             }
+        }
+
+        private void pictureBox1_Click(object sender, EventArgs e)
+        {
+        }
+
+        private void pictureBox1_MouseClick(object sender, MouseEventArgs e)
+        {
+            int x = e.X;
+            int y = e.Y;
+
+            var ctrl = uiObject.GetNodeByPoint(x, y);
+            if (ctrl != null)
+            {
+                var tn = RecrusiveFindTreeNode(ctrl, treeView1.Nodes[0]);
+                if (tn != null)
+                {
+                    treeView1.SelectedNode = tn;
+                    if (selectedNode != null)
+                    {
+                        (selectedNode as LuiLayout).ShowLayoutRect = false;
+                    }
+
+                    selectedNode = tn.Tag;
+                    (selectedNode as LuiLayout).ShowLayoutRect = true;
+                    propertyGrid1.SelectedObject = selectedNode;
+
+                    UpdatePictureBox();
+                }
+            }
+
+        }
+
+        private void exitToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            Close();
+        }
+
+        private void Preferences_Click(object sender, EventArgs e)
+        {
+            if (userConfig is null)
+                userConfig = new UserConfig();
+
+            OptionFrm optionFrm = new OptionFrm();
+            optionFrm.option = userConfig;
+            optionFrm.ShowDialog();
+
+            string js = JsonConvert.SerializeObject(userConfig);
+            File.WriteAllText("config.json", js);
         }
     }
 }
