@@ -2,6 +2,7 @@
 
 # LunaUI
 
+[![Version](https://img.shields.io/badge/PreRelease-0.2.1-blue)](#)
 [![C#](https://img.shields.io/badge/.NET-6.0-blue)](#)
 [![License](https://img.shields.io/static/v1?label=LICENSE&message=GNU%20GPLv3&color=lightrey)](./blob/main/LICENSE)
 

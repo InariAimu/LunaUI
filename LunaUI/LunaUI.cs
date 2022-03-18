@@ -7,8 +7,8 @@ namespace LunaUI
 {
     public class LunaUI
     {
-        public LuiLayout? Root = null;
-        public RenderOption? Option = null;
+        public ControlBase? Root = null;
+        public Option? Option = null;
 
         public LunaUI()
         {
@@ -18,14 +18,14 @@ namespace LunaUI
         public LunaUI(string workPath, string xmlPath)
         {
             LoadFromFile(Path.Combine(workPath, xmlPath));
-            Option = new RenderOption();
+            Option = new Option();
             Option.WorkPath = workPath;
             Option.CanvasSize = Root.Size;
         }
 
         public void New()
         {
-            Root = new LuiLayout();
+            Root = new ControlBase();
         }
 
         public void LoadFromFile(string path)
@@ -33,19 +33,19 @@ namespace LunaUI
             if (File.Exists(path))
             {
                 using StreamReader reader = new(path);
-                XmlSerializer xmlSerializer = new(typeof(LuiLayout));
-                Root = (LuiLayout?)xmlSerializer.Deserialize(reader);
+                XmlSerializer xmlSerializer = new(typeof(ControlBase));
+                Root = (ControlBase?)xmlSerializer.Deserialize(reader);
             }
         }
 
         public void SaveToFile(string path)
         {
             using StreamWriter writer = new(path);
-            XmlSerializer xmlSerializer = new(typeof(LuiLayout));
+            XmlSerializer xmlSerializer = new(typeof(ControlBase));
             xmlSerializer.Serialize(writer, Root);
         }
 
-        public T? GetNodeByPath<T>(string path) where T : LuiLayout
+        public T? GetNodeByPath<T>(string path) where T : ControlBase
         {
             if (!path.StartsWith("Root"))
                 path = "Root/" + path;
@@ -58,7 +58,7 @@ namespace LunaUI
             return null;
         }
 
-        public LuiLayout? FindControlBase(LuiLayout node, string[] paths, int level)
+        public ControlBase? FindControlBase(ControlBase node, string[] paths, int level)
         {
             if (level >= paths.Length)
                 return null;
@@ -74,11 +74,6 @@ namespace LunaUI
                 return node;
             }
             return null;
-        }
-
-        public LuiLayout? GetByPoint(int x, int y)
-        {
-            return Root.GetByPoint(x, y, Option);
         }
 
         public Image Render()

@@ -17,7 +17,7 @@ namespace LunaEdit
             {
                 tw.Nodes.Clear();
 
-                TreeNode root = new(uiObject.Root.Name);
+                TreeNode root = new TreeNode(uiObject.Root.Name);
                 root.Tag = uiObject.Root;
                 RecrusiveAddTreeNode(uiObject.Root, root);
 
@@ -28,47 +28,43 @@ namespace LunaEdit
             //tw.ExpandAll();
         }
 
-        void RecrusiveAddTreeNode(LuiLayout cb, TreeNode root)
+        void RecrusiveAddTreeNode(ControlBase cb, TreeNode root)
         {
             foreach (var c in cb.Childs)
             {
-                TreeNode t = new(c.Name);
+                TreeNode t = new TreeNode(c.Name);
                 t.Tag = c;
                 RecrusiveAddTreeNode(c, t);
                 root.Nodes.Add(t);
             }
         }
 
-        TreeNode? RecrusiveFindTreeNode(LuiLayout cb, TreeNode treeNode)
+        TreeNode? RecrusiveFindTreeNode(ControlBase cb, TreeNode root)
         {
-            if (treeNode.Tag.Equals(cb))
-                return treeNode;
+            if (root.Tag.Equals(cb))
+                return root;
 
-            foreach (TreeNode t in treeNode.Nodes)
+            foreach (TreeNode t in root.Nodes)
             {
-                var tn = RecrusiveFindTreeNode(cb, t);
-                if (tn != null)
-                    return tn;
+                return RecrusiveFindTreeNode(cb, t);
             }
             return null;
         }
 
-        void Add<T>() where T : LuiLayout, new()
+        void Add<T>() where T : ControlBase, new()
         {
-            var t = selectedNode as LuiLayout;
-            var node = new T
-            {
-                Parent = t
-            };
+            var t = selectedNode as ControlBase;
+            var node = new T();
+
+            node.Parent = t;
             t.Childs.Add(node);
 
             var tn = RecrusiveFindTreeNode(t, treeView1.Nodes[0]);
             if (tn != null)
             {
-                TreeNode rt = new(node.Name);
+                TreeNode rt = new TreeNode(node.Name);
                 rt.Tag = node;
                 tn.Nodes.Add(rt);
-                tn.Expand();
             }
             else
             {
@@ -79,7 +75,7 @@ namespace LunaEdit
 
         Point picbox_location;
         Point picbox_size;
-        LunaUI.RenderOption option = new LunaUI.RenderOption();
+        LunaUI.Option option = new LunaUI.Option();
 
         void UpdateUI()
         {
@@ -95,9 +91,6 @@ namespace LunaEdit
 
             try
             {
-                if(pictureBox1.Image != null)
-                    pictureBox1.Image.Dispose();
-
                 Image im = uiObject.Render();
                 pictureBox1.Image = im;
                 picbox_location = new Point(hScrollBar1.Location.X, vScrollBar1.Location.Y);
