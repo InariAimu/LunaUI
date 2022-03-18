@@ -41,6 +41,8 @@ Image img = ui.Render();
 
 ## Editor Guide
 
+[Binary Releases](https://github.com/InariAimu/LunaUI/releases)
+
 First set your work path from `Menu -> Edit -> UI` Options:
 
 ![](.blob/menu_ui_config.PNG)
