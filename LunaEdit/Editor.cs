@@ -192,6 +192,12 @@ namespace LunaEdit
 
         private void SaveToolStripMenuItem_Click(object sender, EventArgs e)
         {
+            if (uiObject == null)
+            {
+                MessageBox.Show("No working file.");
+                return;
+            }
+
             if (curr_file_path != "")
             {
                 uiObject.SaveToJson(curr_file_path);
@@ -212,6 +218,12 @@ namespace LunaEdit
 
         private void SaveAsToolStripMenuItem_Click(object sender, EventArgs e)
         {
+            if (uiObject == null)
+            {
+                MessageBox.Show("No working file.");
+                return;
+            }
+
             SaveFileDialog sfd = new SaveFileDialog();
             sfd.Filter = "Lui File|*.json";
             sfd.InitialDirectory = userConfig.WorkPath;
@@ -225,6 +237,12 @@ namespace LunaEdit
 
         private void ExportImageToolStripMenuItem_Click(object sender, EventArgs e)
         {
+            if (uiObject == null)
+            {
+                MessageBox.Show("No working file.");
+                return;
+            }
+
             SaveFileDialog sfd = new SaveFileDialog();
             sfd.Filter = "Image|*.jpg,*.png";
             sfd.InitialDirectory = userConfig.WorkPath;
@@ -243,6 +261,12 @@ namespace LunaEdit
         {
             int x = e.X;
             int y = e.Y;
+
+            if (uiObject == null)
+            {
+                MessageBox.Show("No working file.");
+                return;
+            }
 
             var ctrl = uiObject.GetNodeByPoint(x, y);
             if (ctrl != null)
@@ -274,7 +298,12 @@ namespace LunaEdit
         private void Preferences_Click(object sender, EventArgs e)
         {
             if (userConfig is null)
-                userConfig = new UserConfig();
+            {
+                userConfig = new UserConfig()
+                {
+                    WorkPath = Environment.CurrentDirectory
+                };
+            }
 
             OptionFrm optionFrm = new OptionFrm();
             optionFrm.option = userConfig;
