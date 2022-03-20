@@ -38,6 +38,15 @@ namespace LunaEdit
                 string js = File.ReadAllText("config.json");
                 userConfig = JsonConvert.DeserializeObject<UserConfig>(js);
             }
+            else
+            {
+                userConfig = new UserConfig()
+                {
+                    WorkPath = Environment.CurrentDirectory
+                };
+                string js = JsonConvert.SerializeObject(userConfig);
+                File.WriteAllText("config.json", js);
+            }
         }
 
         private void Editor_Shown(object sender, EventArgs e)
@@ -125,12 +134,22 @@ namespace LunaEdit
 
         private void propertyGrid1_PropertyValueChanged(object s, PropertyValueChangedEventArgs e)
         {
+            if (uiObject == null)
+            {
+                uiObject = new(userConfig.WorkPath);
+            }
+
             uiObject.Root.Option.CanvasSize = uiObject.Root.Root.Size;
             UpdateUI();
         }
 
         private void SettingsToolStripMenuItem_Click(object sender, EventArgs e)
         {
+            if (uiObject == null)
+            {
+                uiObject = new(userConfig.WorkPath);
+            }
+
             OptionFrm optionFrm = new OptionFrm();
             optionFrm.option = uiObject.Root.Option;
             optionFrm.ShowDialog();
