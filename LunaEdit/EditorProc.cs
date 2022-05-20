@@ -88,6 +88,7 @@ namespace LunaEdit
 
         void UpdateUI()
         {
+            if (uiObject == null) return;
             UpdateTreeView();
             UpdatePictureBox();
 

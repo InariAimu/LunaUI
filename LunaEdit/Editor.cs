@@ -27,6 +27,8 @@ namespace LunaEdit
             contextMenuStrip1.Items.Add(new ToolStripMenuItem("Add Text", null, new EventHandler((s, e) => { Add<LunaUI.LuiText>(); })));
             contextMenuStrip1.Items.Add(new ToolStripMenuItem("Add ColorLayer", null, new EventHandler((s, e) => { Add<LunaUI.LuiColorLayer>(); })));
             contextMenuStrip1.Items.Add(new ToolStripMenuItem("Add ListLayout", null, new EventHandler((s, e) => { Add<LunaUI.LuiListLayout>(); })));
+            contextMenuStrip1.Items.Add(new ToolStripMenuItem("Add CloneTableLayout", null, new EventHandler((s, e) => { Add<LunaUI.LuiCloneTableLayout>(); })));
+            contextMenuStrip1.Items.Add(new ToolStripMenuItem("Add TableLayout", null, new EventHandler((s, e) => { Add<LunaUI.LuiTableLayout>(); })));
 
             contextMenuStrip1.Items.Add(new ToolStripSeparator());
 
@@ -37,6 +39,15 @@ namespace LunaEdit
             {
                 string js = File.ReadAllText("config.json");
                 userConfig = JsonConvert.DeserializeObject<UserConfig>(js);
+            }
+            else
+            {
+                userConfig = new UserConfig()
+                {
+                    WorkPath = Environment.CurrentDirectory
+                };
+                string js = JsonConvert.SerializeObject(userConfig);
+                File.WriteAllText("config.json", js);
             }
         }
 
@@ -125,12 +136,22 @@ namespace LunaEdit
 
         private void propertyGrid1_PropertyValueChanged(object s, PropertyValueChangedEventArgs e)
         {
+            if (uiObject == null)
+            {
+                uiObject = new(userConfig.WorkPath);
+            }
+
             uiObject.Root.Option.CanvasSize = uiObject.Root.Root.Size;
             UpdateUI();
         }
 
         private void SettingsToolStripMenuItem_Click(object sender, EventArgs e)
         {
+            if (uiObject == null)
+            {
+                uiObject = new(userConfig.WorkPath);
+            }
+
             OptionFrm optionFrm = new OptionFrm();
             optionFrm.option = uiObject.Root.Option;
             optionFrm.ShowDialog();
@@ -173,6 +194,12 @@ namespace LunaEdit
 
         private void SaveToolStripMenuItem_Click(object sender, EventArgs e)
         {
+            if (uiObject == null)
+            {
+                MessageBox.Show("No working file.");
+                return;
+            }
+
             if (curr_file_path != "")
             {
                 uiObject.SaveToJson(curr_file_path);
@@ -193,6 +220,12 @@ namespace LunaEdit
 
         private void SaveAsToolStripMenuItem_Click(object sender, EventArgs e)
         {
+            if (uiObject == null)
+            {
+                MessageBox.Show("No working file.");
+                return;
+            }
+
             SaveFileDialog sfd = new SaveFileDialog();
             sfd.Filter = "Lui File|*.json";
             sfd.InitialDirectory = userConfig.WorkPath;
@@ -206,6 +239,12 @@ namespace LunaEdit
 
         private void ExportImageToolStripMenuItem_Click(object sender, EventArgs e)
         {
+            if (uiObject == null)
+            {
+                MessageBox.Show("No working file.");
+                return;
+            }
+
             SaveFileDialog sfd = new SaveFileDialog();
             sfd.Filter = "Image|*.jpg,*.png";
             sfd.InitialDirectory = userConfig.WorkPath;
@@ -224,6 +263,12 @@ namespace LunaEdit
         {
             int x = e.X;
             int y = e.Y;
+
+            if (uiObject == null)
+            {
+                MessageBox.Show("No working file.");
+                return;
+            }
 
             var ctrl = uiObject.GetNodeByPoint(x, y);
             if (ctrl != null)
@@ -255,7 +300,12 @@ namespace LunaEdit
         private void Preferences_Click(object sender, EventArgs e)
         {
             if (userConfig is null)
-                userConfig = new UserConfig();
+            {
+                userConfig = new UserConfig()
+                {
+                    WorkPath = Environment.CurrentDirectory
+                };
+            }
 
             OptionFrm optionFrm = new OptionFrm();
             optionFrm.option = userConfig;
