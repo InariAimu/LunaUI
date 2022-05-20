@@ -258,5 +258,24 @@ namespace LunaUI
             next.SetRect((int)x, (int)y, Size.Width, Size.Height);
             RenderChilds(g, next);
         }
+
+        protected LuiImage(LuiImage copy) : base(copy)
+        {
+            ImagePath = copy.ImagePath;
+            Clip = copy.Clip;
+            Alpha = copy.Alpha;
+            Light = copy.Light;
+            Contrast = copy.Contrast;
+            ImageRenderMode = copy.ImageRenderMode;
+            MirrorX = copy.MirrorX;
+            MirrorY = copy.MirrorY;
+            BasePath = copy.BasePath;
+            ImageSize = copy.Size;
+        }
+
+        public override LuiLayout DeepClone()
+        {
+            return new LuiImage(this);
+        }
     }
 }

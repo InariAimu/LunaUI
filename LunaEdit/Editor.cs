@@ -27,6 +27,8 @@ namespace LunaEdit
             contextMenuStrip1.Items.Add(new ToolStripMenuItem("Add Text", null, new EventHandler((s, e) => { Add<LunaUI.LuiText>(); })));
             contextMenuStrip1.Items.Add(new ToolStripMenuItem("Add ColorLayer", null, new EventHandler((s, e) => { Add<LunaUI.LuiColorLayer>(); })));
             contextMenuStrip1.Items.Add(new ToolStripMenuItem("Add ListLayout", null, new EventHandler((s, e) => { Add<LunaUI.LuiListLayout>(); })));
+            contextMenuStrip1.Items.Add(new ToolStripMenuItem("Add CloneTableLayout", null, new EventHandler((s, e) => { Add<LunaUI.LuiCloneTableLayout>(); })));
+            contextMenuStrip1.Items.Add(new ToolStripMenuItem("Add TableLayout", null, new EventHandler((s, e) => { Add<LunaUI.LuiTableLayout>(); })));
 
             contextMenuStrip1.Items.Add(new ToolStripSeparator());
 

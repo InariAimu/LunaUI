@@ -10,9 +10,18 @@ namespace LunaUI
         Even,
     }
 
+    public enum ListDirection
+    {
+        Horizontal,
+        Vertical
+    }
+
     [Serializable]
     public class LuiListLayout : LuiLayout
     {
+        [JsonProperty("list_direction")]
+        public ListDirection ListDirection { get; set; } = ListDirection.Horizontal;
+
         [JsonProperty("clip")]
         public ListAlignMode AlignMode { get; set; } = ListAlignMode.Normal;
 
@@ -45,13 +54,31 @@ namespace LunaUI
 
                 if (AlignMode == ListAlignMode.Normal)
                 {
-                    next_y += child.Size.Height + ItemPadding;
+                    if (ListDirection == ListDirection.Horizontal)
+                        next_x += child.Size.Width + ItemPadding;
+                    else
+                        next_y += child.Size.Height + ItemPadding;
                 }
                 else if (AlignMode == ListAlignMode.Even)
                 {
-                    next_y += ItemDistance + ItemPadding;
+                    if (ListDirection == ListDirection.Horizontal)
+                        next_x += ItemDistance + ItemPadding;
+                    else
+                        next_y += ItemDistance + ItemPadding;
                 }
             }
+        }
+        protected LuiListLayout(LuiListLayout copy) : base(copy)
+        {
+            ListDirection = copy.ListDirection;
+            AlignMode = copy.AlignMode;
+            ItemPadding = copy.ItemPadding;
+            ItemDistance = copy.ItemDistance;
+        }
+
+        public override LuiLayout DeepClone()
+        {
+            return new LuiListLayout(this);
         }
     }
 }

@@ -157,5 +157,28 @@ namespace LunaUI
         {
             Position = new Point(Position.X + dx, Position.Y + dy);
         }
+
+        protected LuiLayout(LuiLayout copy)
+        {
+            Name = copy.Name;
+            Position = copy.Position;
+            Pivot = copy.Pivot;
+            Docking = copy.Docking;
+            Size = copy.Size;
+            Visible = copy.Visible;
+            AutoSizeX = copy.AutoSizeX;
+            AutoSizeY = copy.AutoSizeY;
+            SubLayouts = new List<LuiLayout>();
+            Parent = copy.Parent;
+            foreach (var l in copy.SubLayouts)
+            {
+                SubLayouts.Add(l.DeepClone());
+            }
+        }
+
+        public virtual LuiLayout DeepClone()
+        {
+            return new LuiLayout(this);
+        }
     }
 }

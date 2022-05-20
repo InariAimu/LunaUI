@@ -1,4 +1,5 @@
 ﻿using System.ComponentModel;
+using System.Diagnostics.Contracts;
 using System.Drawing;
 
 using Newtonsoft.Json;
@@ -43,5 +44,14 @@ namespace LunaUI
             RenderChilds(g, next);
         }
 
+        protected LuiColorLayer(LuiColorLayer copy) : base(copy)
+        {
+            this.Color = copy.Color;
+        }
+
+        public override LuiLayout DeepClone()
+        {
+            return new LuiColorLayer(this);
+        }
     }
 }

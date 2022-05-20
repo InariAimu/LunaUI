@@ -1,4 +1,5 @@
 ﻿using System.ComponentModel;
+using System.Diagnostics.Contracts;
 using System.Drawing;
 using System.Drawing.Drawing2D;
 
@@ -412,5 +413,30 @@ namespace LunaUI
             return new Size((int)sw, (int)sh);
         }
 
+        protected LuiText(LuiText copy) : base(copy)
+        {
+            PlaceHolder = copy.PlaceHolder;
+            TextRenderMode = copy.TextRenderMode;
+            Kerning = copy.Kerning;
+            Font = copy.Font;
+            FontSize = copy.FontSize;
+            FontStyle = copy.FontStyle;
+            Color = copy.Color;
+            Align = copy.Align;
+            LineAlign = copy.LineAlign;
+            HasShade = copy.HasShade;
+            ShadeColor = copy.ShadeColor;
+            ShadeDisplacement = copy.ShadeDisplacement;
+            HasBorder = copy.HasBorder;
+            BorderColor = copy.BorderColor;
+            BorderDisplacement = copy.BorderDisplacement;
+            SetSizeByPlaceholder = copy.SetSizeByPlaceholder;
+            textKerningCfg = copy.textKerningCfg;
+        }
+
+        public override LuiLayout DeepClone()
+        {
+            return new LuiText(this);
+        }
     }
 }
