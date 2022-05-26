@@ -16,7 +16,7 @@ public enum TextRenderMode
     Default,
 
     /// <summary>
-    /// String is rendered charwisely. Adjust <see cref="LuiText.Kerning"/> to control distance between characters.
+    /// String is rendered charwisely. Adjust <see cref="LuiText.CharSpacingRate"/> to control distance between characters.
     /// </summary>
     CharWise,
 }
@@ -72,7 +72,7 @@ public class LuiText : LuiLayout
     /// </summary>
     [JsonProperty("kerning")]
     [Category("Font Kerning")]
-    public float Kerning { get; set; } = 1f;
+    public float CharSpacingRate { get; set; } = 1f;
 
     /// <summary>
     /// This is a factor for kerning scale.
@@ -221,7 +221,7 @@ public class LuiText : LuiLayout
         sf.Alignment = Align;
         sf.LineAlignment = LineAlign;
 
-        string temp_str = Text ?? PlaceHolder;
+        string strDraw = Text ?? PlaceHolder;
 
         if (TextRenderMode == TextRenderMode.CharWise)
             _textKerningCfg = op.TextKerningConfig;
@@ -230,42 +230,47 @@ public class LuiText : LuiLayout
         {
             b.Color = ShadeColor;
 
-            GraphicsPath p_s = new();
+            GraphicsPath gpath = new();
 
             float size = g.DpiY * f.SizeInPoints / 72;
 
             if (TextRenderMode == TextRenderMode.Default)
             {
-                p_s.AddString(temp_str, f.FontFamily, (int)f.Style, size,
-                RectangleF.FromLTRB(x + ShadeDisplacement, y + ShadeDisplacement, x + Size.Width + ShadeDisplacement, y + Size.Height + ShadeDisplacement), sf);
+                gpath.AddString(strDraw, f.FontFamily, (int)f.Style, size,
+                    RectangleF.FromLTRB(
+                        x + ShadeDisplacement,
+                        y + ShadeDisplacement,
+                        x + Size.Width + ShadeDisplacement,
+                        y + Size.Height + ShadeDisplacement),
+                    sf);
             }
             else if (TextRenderMode == TextRenderMode.CharWise)
             {
-                var str_size = MeasureString(g, temp_str, f, Kerning);
+                var strSize = MeasureString(g, strDraw, f, CharSpacingRate);
                 float sx = x;
                 float sy = y;
 
                 if (Align == StringAlignment.Center)
-                    sx = x + Size.Width / 2 - str_size.Width / 2;
+                    sx = x + Size.Width / 2 - strSize.Width / 2;
                 else if (Align == StringAlignment.Far)
                 {
-                    sx = x + Size.Width - str_size.Width;
+                    sx = x + Size.Width - strSize.Width;
                 }
 
                 if (LineAlign == StringAlignment.Center)
-                    sy = y + Size.Height / 2 - str_size.Height / 2;
+                    sy = y + Size.Height / 2 - strSize.Height / 2;
                 else if (LineAlign == StringAlignment.Far)
                 {
-                    sy = y + Size.Height - str_size.Height;
+                    sy = y + Size.Height - strSize.Height;
                 }
 
-                CharWiseAddToGraphicsPath(g, p_s, temp_str, f, sx + ShadeDisplacement, sy + ShadeDisplacement, Kerning);
+                CharWiseAddToGraphicsPath(g, gpath, strDraw, f, sx + ShadeDisplacement, sy + ShadeDisplacement, CharSpacingRate);
             }
 
             if (ShadeSize > 1)
-                g.DrawPath(new Pen(b, ShadeSize), p_s);
+                g.DrawPath(new Pen(b, ShadeSize), gpath);
 
-            g.FillPath(b, p_s);
+            g.FillPath(b, gpath);
         }
 
         if (HasBorder)
@@ -279,12 +284,12 @@ public class LuiText : LuiLayout
 
             if (TextRenderMode == TextRenderMode.Default)
             {
-                p.AddString(temp_str, f.FontFamily, (int)f.Style, size,
+                p.AddString(strDraw, f.FontFamily, (int)f.Style, size,
                 RectangleF.FromLTRB(x + dp, y + dp, x + Size.Width + dp, y + Size.Height + dp), sf);
             }
             else if (TextRenderMode == TextRenderMode.CharWise)
             {
-                var str_size = MeasureString(g, temp_str, f, Kerning);
+                var str_size = MeasureString(g, strDraw, f, CharSpacingRate);
                 float sx = x;
                 float sy = y;
 
@@ -302,7 +307,7 @@ public class LuiText : LuiLayout
                     sy = y + Size.Height - str_size.Height;
                 }
 
-                CharWiseAddToGraphicsPath(g, p, temp_str, f, sx, sy, Kerning);
+                CharWiseAddToGraphicsPath(g, p, strDraw, f, sx, sy, CharSpacingRate);
             }
 
             g.DrawPath(new Pen(b, BorderDisplacement), p);
@@ -312,12 +317,12 @@ public class LuiText : LuiLayout
         b.Color = Color;
         if (TextRenderMode == TextRenderMode.Default)
         {
-            g.DrawString(temp_str, f, b,
+            g.DrawString(strDraw, f, b,
                 RectangleF.FromLTRB(x, y, x + Size.Width, y + Size.Height), sf);
         }
         else if (TextRenderMode == TextRenderMode.CharWise)
         {
-            var size = MeasureString(g, temp_str, f, Kerning);
+            var size = MeasureString(g, strDraw, f, CharSpacingRate);
             float sx = x;
             float sy = y;
 
@@ -335,7 +340,7 @@ public class LuiText : LuiLayout
                 sy = y + Size.Height - size.Height;
             }
 
-            CharWiseDrawString(g, temp_str, f, b, sx, sy, Kerning);
+            CharWiseDrawString(g, strDraw, f, b, sx, sy, CharSpacingRate);
         }
 
         RenderLayoutRect(g, op, x, y);
@@ -354,7 +359,7 @@ public class LuiText : LuiLayout
         }
         else if (TextRenderMode == TextRenderMode.CharWise)
         {
-            Size = MeasureString(g, PlaceHolder, f, Kerning);
+            Size = MeasureString(g, PlaceHolder, f, CharSpacingRate);
         }
     }
 
@@ -468,7 +473,7 @@ public class LuiText : LuiLayout
         PlaceHolder = copy.PlaceHolder;
         TextRenderMode = copy.TextRenderMode;
         TextKerningMode = copy.TextKerningMode;
-        Kerning = copy.Kerning;
+        CharSpacingRate = copy.CharSpacingRate;
         Font = copy.Font;
         FontSize = copy.FontSize;
         FontStyle = copy.FontStyle;
