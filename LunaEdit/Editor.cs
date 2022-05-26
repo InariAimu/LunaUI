@@ -33,7 +33,7 @@ public partial class Editor : Form
         contextMenuStrip1.Items.Add(new ToolStripMenuItem("Add Text", null, new EventHandler((s, e) => { Add<LuiText>(); })));
         contextMenuStrip1.Items.Add(new ToolStripMenuItem("Add ColorLayer", null, new EventHandler((s, e) => { Add<LuiColorLayer>(); })));
         contextMenuStrip1.Items.Add(new ToolStripMenuItem("Add ListLayout", null, new EventHandler((s, e) => { Add<LuiListLayout>(); })));
-        contextMenuStrip1.Items.Add(new ToolStripMenuItem("Add CloneTableLayout", null, new EventHandler((s, e) => { Add<LunaUI.LuiCloneTableLayout>(); })));
+        contextMenuStrip1.Items.Add(new ToolStripMenuItem("Add CloneTableLayout", null, new EventHandler((s, e) => { Add<LuiCloneTableLayout>(); })));
         contextMenuStrip1.Items.Add(new ToolStripMenuItem("Add TableLayout", null, new EventHandler((s, e) => { Add<LuiTableLayout>(); })));
 
         contextMenuStrip1.Items.Add(new ToolStripSeparator());
