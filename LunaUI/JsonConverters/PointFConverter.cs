@@ -21,7 +21,7 @@ internal class PointFConverter : JsonConverter<PointF>
 
         float x = 0;
         float y = 0;
-        var sd = s.Split(',');
+        string[]? sd = s.Split(',');
         float.TryParse(sd[0], out x);
         float.TryParse(sd[1], out y);
         return new PointF(x, y);

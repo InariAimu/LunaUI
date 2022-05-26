@@ -1,6 +1,8 @@
 ﻿using System.ComponentModel;
 using System.Drawing;
+
 using LunaUI.Layouts;
+
 using Newtonsoft.Json;
 
 namespace LunaUI;
@@ -33,7 +35,7 @@ public class RenderOption : ICloneable
 
     public object Clone()
     {
-        var op = new RenderOption
+        RenderOption? op = new RenderOption
         {
             WorkPath = WorkPath,
             CanvasLocation = new Point(CanvasLocation.X, CanvasLocation.Y),

@@ -2,7 +2,9 @@
 using System.Drawing;
 using System.Drawing.Drawing2D;
 using System.Text;
+
 using Newtonsoft.Json;
+
 using RoyT.TrueType;
 using RoyT.TrueType.Helpers;
 

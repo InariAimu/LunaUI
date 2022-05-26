@@ -1,6 +1,7 @@
 ﻿using System.ComponentModel;
 using System.Drawing;
 using System.Drawing.Imaging;
+
 using Newtonsoft.Json;
 
 namespace LunaUI.Layouts;
@@ -122,7 +123,7 @@ public class LuiImage : LuiLayout
 
     void LoadImage()
     {
-        var impath = Path.Combine(BasePath, ImagePath);
+        string? impath = Path.Combine(BasePath, ImagePath);
         FileInfo file = new FileInfo(impath);
 
         if (!file.Exists)
@@ -230,7 +231,7 @@ public class LuiImage : LuiLayout
                 }
             }
         }
-        catch (Exception ex)
+        catch (Exception)
         {
 
         }
