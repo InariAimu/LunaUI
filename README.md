@@ -2,7 +2,7 @@
 
 # LunaUI
 
-[![Version](https://img.shields.io/badge/PreRelease-0.2.1-blue)](#)
+[![Version](https://img.shields.io/badge/PreRelease-0.3.0-blue)](#)
 [![C#](https://img.shields.io/badge/.NET-6.0-blue)](#)
 [![License](https://img.shields.io/static/v1?label=LICENSE&message=GNU%20GPLv3&color=lightrey)](./blob/main/LICENSE)
 
@@ -125,3 +125,8 @@ ImageLayout's image is setted through `Menu -> Edit -> Select Image for Image`. 
 
 Move layouts by mouse is not supported now. Click to select them. Please edit it in the properties window.
 
+## License
+
+GNU GPL v3
+
+> TrueType: from [RoyT.TrueType](https://github.com/roy-t/TrueType) with [MIT license](TrueType/LICENSE).

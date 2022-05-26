@@ -7,6 +7,8 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "LunaUI", "LunaUI\LunaUI.csp
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "LunaEdit", "LunaEdit\LunaEdit.csproj", "{E2FCC58E-C78C-4858-8C3E-B9F154402BB1}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TrueType", "TrueType\TrueType.csproj", "{F8018384-02E4-44C1-91DF-46AFDAB5AE8C}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -21,6 +23,10 @@ Global
 		{E2FCC58E-C78C-4858-8C3E-B9F154402BB1}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{E2FCC58E-C78C-4858-8C3E-B9F154402BB1}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{E2FCC58E-C78C-4858-8C3E-B9F154402BB1}.Release|Any CPU.Build.0 = Release|Any CPU
+		{F8018384-02E4-44C1-91DF-46AFDAB5AE8C}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{F8018384-02E4-44C1-91DF-46AFDAB5AE8C}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{F8018384-02E4-44C1-91DF-46AFDAB5AE8C}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{F8018384-02E4-44C1-91DF-46AFDAB5AE8C}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

@@ -43,6 +43,7 @@
             this.编辑ToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.OpenImageMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.EditorOptions = new System.Windows.Forms.ToolStripMenuItem();
+            this.Preferences = new System.Windows.Forms.ToolStripMenuItem();
             this.testToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.testToolStripMenuItem1 = new System.Windows.Forms.ToolStripMenuItem();
             this.toolStripMenuItem1 = new System.Windows.Forms.ToolStripMenuItem();
@@ -54,7 +55,6 @@
             this.hScrollBar1 = new System.Windows.Forms.HScrollBar();
             this.splitContainerLeft = new System.Windows.Forms.SplitContainer();
             this.splitContainerRight = new System.Windows.Forms.SplitContainer();
-            this.Preferences = new System.Windows.Forms.ToolStripMenuItem();
             this.menuStrip1.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.pictureBox1)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.splitContainerLeft)).BeginInit();
@@ -77,7 +77,8 @@
             this.toolStripMenuItem1});
             this.menuStrip1.Location = new System.Drawing.Point(0, 0);
             this.menuStrip1.Name = "menuStrip1";
-            this.menuStrip1.Size = new System.Drawing.Size(887, 25);
+            this.menuStrip1.Padding = new System.Windows.Forms.Padding(9, 3, 0, 3);
+            this.menuStrip1.Size = new System.Drawing.Size(1394, 34);
             this.menuStrip1.TabIndex = 0;
             this.menuStrip1.Text = "menuStrip1";
             // 
@@ -94,63 +95,63 @@
             this.toolStripSeparator3,
             this.exitToolStripMenuItem});
             this.文件ToolStripMenuItem.Name = "文件ToolStripMenuItem";
-            this.文件ToolStripMenuItem.Size = new System.Drawing.Size(39, 21);
+            this.文件ToolStripMenuItem.Size = new System.Drawing.Size(56, 28);
             this.文件ToolStripMenuItem.Text = "File";
             // 
             // 新建Lui界面ToolStripMenuItem
             // 
             this.新建Lui界面ToolStripMenuItem.Name = "新建Lui界面ToolStripMenuItem";
-            this.新建Lui界面ToolStripMenuItem.Size = new System.Drawing.Size(164, 22);
+            this.新建Lui界面ToolStripMenuItem.Size = new System.Drawing.Size(242, 34);
             this.新建Lui界面ToolStripMenuItem.Text = "New Lui Layout";
             this.新建Lui界面ToolStripMenuItem.Click += new System.EventHandler(this.NewLuiToolStripMenuItem_Click);
             // 
             // 打开ToolStripMenuItem
             // 
             this.打开ToolStripMenuItem.Name = "打开ToolStripMenuItem";
-            this.打开ToolStripMenuItem.Size = new System.Drawing.Size(164, 22);
+            this.打开ToolStripMenuItem.Size = new System.Drawing.Size(242, 34);
             this.打开ToolStripMenuItem.Text = "Open";
             this.打开ToolStripMenuItem.Click += new System.EventHandler(this.OpenLuiToolStripMenuItem_Click);
             // 
             // toolStripSeparator1
             // 
             this.toolStripSeparator1.Name = "toolStripSeparator1";
-            this.toolStripSeparator1.Size = new System.Drawing.Size(161, 6);
+            this.toolStripSeparator1.Size = new System.Drawing.Size(239, 6);
             // 
             // 保存ToolStripMenuItem
             // 
             this.保存ToolStripMenuItem.Name = "保存ToolStripMenuItem";
-            this.保存ToolStripMenuItem.Size = new System.Drawing.Size(164, 22);
+            this.保存ToolStripMenuItem.Size = new System.Drawing.Size(242, 34);
             this.保存ToolStripMenuItem.Text = "Save";
             this.保存ToolStripMenuItem.Click += new System.EventHandler(this.SaveToolStripMenuItem_Click);
             // 
             // 另存为ToolStripMenuItem
             // 
             this.另存为ToolStripMenuItem.Name = "另存为ToolStripMenuItem";
-            this.另存为ToolStripMenuItem.Size = new System.Drawing.Size(164, 22);
+            this.另存为ToolStripMenuItem.Size = new System.Drawing.Size(242, 34);
             this.另存为ToolStripMenuItem.Text = "Save As";
             this.另存为ToolStripMenuItem.Click += new System.EventHandler(this.SaveAsToolStripMenuItem_Click);
             // 
             // toolStripSeparator2
             // 
             this.toolStripSeparator2.Name = "toolStripSeparator2";
-            this.toolStripSeparator2.Size = new System.Drawing.Size(161, 6);
+            this.toolStripSeparator2.Size = new System.Drawing.Size(239, 6);
             // 
             // 保存图片ToolStripMenuItem
             // 
             this.保存图片ToolStripMenuItem.Name = "保存图片ToolStripMenuItem";
-            this.保存图片ToolStripMenuItem.Size = new System.Drawing.Size(164, 22);
+            this.保存图片ToolStripMenuItem.Size = new System.Drawing.Size(242, 34);
             this.保存图片ToolStripMenuItem.Text = "Export Image";
             this.保存图片ToolStripMenuItem.Click += new System.EventHandler(this.ExportImageToolStripMenuItem_Click);
             // 
             // toolStripSeparator3
             // 
             this.toolStripSeparator3.Name = "toolStripSeparator3";
-            this.toolStripSeparator3.Size = new System.Drawing.Size(161, 6);
+            this.toolStripSeparator3.Size = new System.Drawing.Size(239, 6);
             // 
             // exitToolStripMenuItem
             // 
             this.exitToolStripMenuItem.Name = "exitToolStripMenuItem";
-            this.exitToolStripMenuItem.Size = new System.Drawing.Size(164, 22);
+            this.exitToolStripMenuItem.Size = new System.Drawing.Size(242, 34);
             this.exitToolStripMenuItem.Text = "Exit";
             this.exitToolStripMenuItem.Click += new System.EventHandler(this.exitToolStripMenuItem_Click);
             // 
@@ -161,43 +162,50 @@
             this.EditorOptions,
             this.Preferences});
             this.编辑ToolStripMenuItem.Name = "编辑ToolStripMenuItem";
-            this.编辑ToolStripMenuItem.Size = new System.Drawing.Size(42, 21);
+            this.编辑ToolStripMenuItem.Size = new System.Drawing.Size(60, 28);
             this.编辑ToolStripMenuItem.Text = "Edit";
             // 
             // OpenImageMenuItem
             // 
             this.OpenImageMenuItem.Name = "OpenImageMenuItem";
-            this.OpenImageMenuItem.Size = new System.Drawing.Size(213, 22);
+            this.OpenImageMenuItem.Size = new System.Drawing.Size(308, 34);
             this.OpenImageMenuItem.Text = "Select Image for Image";
             this.OpenImageMenuItem.Click += new System.EventHandler(this.OpenImageToolStripMenuItem_Click);
             // 
             // EditorOptions
             // 
             this.EditorOptions.Name = "EditorOptions";
-            this.EditorOptions.Size = new System.Drawing.Size(213, 22);
+            this.EditorOptions.Size = new System.Drawing.Size(308, 34);
             this.EditorOptions.Text = "UI Options";
             this.EditorOptions.Click += new System.EventHandler(this.SettingsToolStripMenuItem_Click);
+            // 
+            // Preferences
+            // 
+            this.Preferences.Name = "Preferences";
+            this.Preferences.Size = new System.Drawing.Size(308, 34);
+            this.Preferences.Text = "Editor Options";
+            this.Preferences.Click += new System.EventHandler(this.Preferences_Click);
             // 
             // testToolStripMenuItem
             // 
             this.testToolStripMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
             this.testToolStripMenuItem1});
             this.testToolStripMenuItem.Name = "testToolStripMenuItem";
-            this.testToolStripMenuItem.Size = new System.Drawing.Size(44, 21);
+            this.testToolStripMenuItem.Size = new System.Drawing.Size(61, 28);
             this.testToolStripMenuItem.Text = "Test";
             // 
             // testToolStripMenuItem1
             // 
             this.testToolStripMenuItem1.Name = "testToolStripMenuItem1";
-            this.testToolStripMenuItem1.Size = new System.Drawing.Size(100, 22);
+            this.testToolStripMenuItem1.Size = new System.Drawing.Size(145, 34);
             this.testToolStripMenuItem1.Text = "Test";
             this.testToolStripMenuItem1.Click += new System.EventHandler(this.testToolStripMenuItem1_Click);
             // 
             // toolStripMenuItem1
             // 
             this.toolStripMenuItem1.Name = "toolStripMenuItem1";
-            this.toolStripMenuItem1.Size = new System.Drawing.Size(71, 21);
-            this.toolStripMenuItem1.Text = "Pre-0.2.1";
+            this.toolStripMenuItem1.Size = new System.Drawing.Size(103, 28);
+            this.toolStripMenuItem1.Text = "Pre-0.3.0";
             // 
             // contextMenuStrip1
             // 
@@ -211,7 +219,7 @@
             this.propertyGrid1.Location = new System.Drawing.Point(0, 0);
             this.propertyGrid1.Margin = new System.Windows.Forms.Padding(0);
             this.propertyGrid1.Name = "propertyGrid1";
-            this.propertyGrid1.Size = new System.Drawing.Size(221, 429);
+            this.propertyGrid1.Size = new System.Drawing.Size(221, 607);
             this.propertyGrid1.TabIndex = 3;
             this.propertyGrid1.PropertyValueChanged += new System.Windows.Forms.PropertyValueChangedEventHandler(this.propertyGrid1_PropertyValueChanged);
             // 
@@ -221,7 +229,7 @@
             this.treeView1.Location = new System.Drawing.Point(0, 0);
             this.treeView1.Margin = new System.Windows.Forms.Padding(0);
             this.treeView1.Name = "treeView1";
-            this.treeView1.Size = new System.Drawing.Size(226, 429);
+            this.treeView1.Size = new System.Drawing.Size(226, 607);
             this.treeView1.TabIndex = 1;
             this.treeView1.NodeMouseClick += new System.Windows.Forms.TreeNodeMouseClickEventHandler(this.treeView1_NodeMouseClick);
             // 
@@ -234,7 +242,7 @@
             this.pictureBox1.Location = new System.Drawing.Point(0, 0);
             this.pictureBox1.Margin = new System.Windows.Forms.Padding(0);
             this.pictureBox1.Name = "pictureBox1";
-            this.pictureBox1.Size = new System.Drawing.Size(416, 409);
+            this.pictureBox1.Size = new System.Drawing.Size(909, 578);
             this.pictureBox1.TabIndex = 2;
             this.pictureBox1.TabStop = false;
             this.pictureBox1.Click += new System.EventHandler(this.pictureBox1_Click);
@@ -244,10 +252,10 @@
             // 
             this.vScrollBar1.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
             | System.Windows.Forms.AnchorStyles.Right)));
-            this.vScrollBar1.Location = new System.Drawing.Point(416, 0);
-            this.vScrollBar1.Margin = new System.Windows.Forms.Padding(0, 0, 1, 0);
+            this.vScrollBar1.Location = new System.Drawing.Point(909, 0);
+            this.vScrollBar1.Margin = new System.Windows.Forms.Padding(0, 0, 2, 0);
             this.vScrollBar1.Name = "vScrollBar1";
-            this.vScrollBar1.Size = new System.Drawing.Size(20, 409);
+            this.vScrollBar1.Size = new System.Drawing.Size(20, 578);
             this.vScrollBar1.TabIndex = 5;
             this.vScrollBar1.Scroll += new System.Windows.Forms.ScrollEventHandler(this.vScrollBar1_Scroll);
             // 
@@ -255,9 +263,9 @@
             // 
             this.hScrollBar1.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
-            this.hScrollBar1.Location = new System.Drawing.Point(0, 409);
+            this.hScrollBar1.Location = new System.Drawing.Point(0, 578);
             this.hScrollBar1.Name = "hScrollBar1";
-            this.hScrollBar1.Size = new System.Drawing.Size(416, 20);
+            this.hScrollBar1.Size = new System.Drawing.Size(909, 20);
             this.hScrollBar1.TabIndex = 4;
             this.hScrollBar1.Scroll += new System.Windows.Forms.ScrollEventHandler(this.hScrollBar1_Scroll);
             // 
@@ -265,8 +273,7 @@
             // 
             this.splitContainerLeft.Dock = System.Windows.Forms.DockStyle.Fill;
             this.splitContainerLeft.FixedPanel = System.Windows.Forms.FixedPanel.Panel1;
-            this.splitContainerLeft.Location = new System.Drawing.Point(0, 25);
-            this.splitContainerLeft.Margin = new System.Windows.Forms.Padding(2);
+            this.splitContainerLeft.Location = new System.Drawing.Point(0, 34);
             this.splitContainerLeft.Name = "splitContainerLeft";
             // 
             // splitContainerLeft.Panel1
@@ -277,9 +284,9 @@
             // splitContainerLeft.Panel2
             // 
             this.splitContainerLeft.Panel2.Controls.Add(this.splitContainerRight);
-            this.splitContainerLeft.Size = new System.Drawing.Size(887, 429);
+            this.splitContainerLeft.Size = new System.Drawing.Size(1394, 607);
             this.splitContainerLeft.SplitterDistance = 226;
-            this.splitContainerLeft.SplitterWidth = 3;
+            this.splitContainerLeft.SplitterWidth = 5;
             this.splitContainerLeft.TabIndex = 7;
             // 
             // splitContainerRight
@@ -287,7 +294,6 @@
             this.splitContainerRight.Dock = System.Windows.Forms.DockStyle.Fill;
             this.splitContainerRight.FixedPanel = System.Windows.Forms.FixedPanel.Panel2;
             this.splitContainerRight.Location = new System.Drawing.Point(0, 0);
-            this.splitContainerRight.Margin = new System.Windows.Forms.Padding(2);
             this.splitContainerRight.Name = "splitContainerRight";
             // 
             // splitContainerRight.Panel1
@@ -300,27 +306,21 @@
             // 
             this.splitContainerRight.Panel2.Controls.Add(this.propertyGrid1);
             this.splitContainerRight.Panel2MinSize = 100;
-            this.splitContainerRight.Size = new System.Drawing.Size(658, 429);
-            this.splitContainerRight.SplitterDistance = 434;
-            this.splitContainerRight.SplitterWidth = 3;
+            this.splitContainerRight.Size = new System.Drawing.Size(1163, 607);
+            this.splitContainerRight.SplitterDistance = 937;
+            this.splitContainerRight.SplitterWidth = 5;
             this.splitContainerRight.TabIndex = 0;
-            // 
-            // Preferences
-            // 
-            this.Preferences.Name = "Preferences";
-            this.Preferences.Size = new System.Drawing.Size(213, 22);
-            this.Preferences.Text = "Editor Options";
-            this.Preferences.Click += new System.EventHandler(this.Preferences_Click);
             // 
             // Editor
             // 
-            this.AutoScaleDimensions = new System.Drawing.SizeF(7F, 17F);
+            this.AutoScaleDimensions = new System.Drawing.SizeF(11F, 24F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.BackColor = System.Drawing.Color.DarkGray;
-            this.ClientSize = new System.Drawing.Size(887, 454);
+            this.ClientSize = new System.Drawing.Size(1394, 641);
             this.Controls.Add(this.splitContainerLeft);
             this.Controls.Add(this.menuStrip1);
             this.MainMenuStrip = this.menuStrip1;
+            this.Margin = new System.Windows.Forms.Padding(5, 4, 5, 4);
             this.Name = "Editor";
             this.StartPosition = System.Windows.Forms.FormStartPosition.CenterScreen;
             this.Text = "LuiEditor";
