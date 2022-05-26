@@ -3,7 +3,6 @@ using System.ComponentModel;
 using System.ComponentModel.Design.Serialization;
 using System.Drawing;
 using System.Globalization;
-using System.Reflection;
 
 namespace LunaUI;
 
@@ -35,7 +34,7 @@ internal class PointFConverter : TypeConverter
         char ch = culture.TextInfo.ListSeparator[0];
         string[] textArray = text.Split(new char[] { ch });
         float[] numArray = new float[textArray.Length];
-        TypeConverter converter = TypeDescriptor.GetConverter(typeof(float));
+        var converter = TypeDescriptor.GetConverter(typeof(float));
         for (int i = 0; i < numArray.Length; i++)
         {
             numArray[i] = (float)converter.ConvertFromString(context, culture, textArray[i]);
@@ -61,7 +60,7 @@ internal class PointFConverter : TypeConverter
                 culture = CultureInfo.CurrentCulture;
             }
             string separator = culture.TextInfo.ListSeparator + " ";
-            TypeConverter converter = TypeDescriptor.GetConverter(typeof(float));
+            var converter = TypeDescriptor.GetConverter(typeof(float));
             string[] textArray = new string[2];
             int num = 0;
             textArray[num++] = converter.ConvertToString(context, culture, pointf.X);
@@ -71,7 +70,7 @@ internal class PointFConverter : TypeConverter
         if ((destinationType == typeof(InstanceDescriptor)) && (value is SizeF))
         {
             PointF pointf2 = (PointF)value;
-            ConstructorInfo member = typeof(PointF).GetConstructor(new Type[] { typeof(float), typeof(float) });
+            var member = typeof(PointF).GetConstructor(new Type[] { typeof(float), typeof(float) });
             if (member != null)
             {
                 return new InstanceDescriptor(member, new object[] { pointf2.X, pointf2.Y });
