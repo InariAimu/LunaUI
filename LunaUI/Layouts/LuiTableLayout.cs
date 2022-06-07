@@ -39,8 +39,8 @@ public class LuiTableLayout : LuiLayout
 
     public override void Render(Graphics g, RenderOption op)
     {
-        float x = op.CanvasLocation.X + op.CanvasSize.Width * Docking.X + Position.X - Size.Width * Pivot.X;
-        float y = op.CanvasLocation.Y + op.CanvasSize.Height * Docking.Y + Position.Y - Size.Height * Pivot.Y;
+        float x = op.CanvasLocation.X + op.CanvasSize.Width * Docking.X + Position.X - GetWidth() * Pivot.X;
+        float y = op.CanvasLocation.Y + op.CanvasSize.Height * Docking.Y + Position.Y - GetHeight() * Pivot.Y;
 
         RenderLayoutRect(g, op, x, y);
 
@@ -48,8 +48,8 @@ public class LuiTableLayout : LuiLayout
         {
             int xt = i % TableColumns;
             int yt = i / TableColumns;
-            int wid = (Size.Width - ItemPaddingX * (TableColumns - 1)) / TableColumns;
-            int hgt = (Size.Height - ItemPaddingY * (TableRows - 1)) / TableRows;
+            int wid = (GetWidth() - ItemPaddingX * (TableColumns - 1)) / TableColumns;
+            int hgt = (GetHeight() - ItemPaddingY * (TableRows - 1)) / TableRows;
             var child = SubLayouts[i];
             RenderOption next = (RenderOption)op.Clone();
             next.SetRect((int)x + xt * wid, (int)y + yt * hgt, wid, hgt);

@@ -118,13 +118,14 @@ public class LuiImage : LuiLayout
 
     public override void Init(RenderOption op)
     {
+        base.Init(op);
         BasePath = op.WorkPath;
     }
 
     void LoadImage()
     {
         string? impath = Path.Combine(BasePath, ImagePath);
-        FileInfo file = new FileInfo(impath);
+        FileInfo file = new(impath);
 
         if (!file.Exists)
             return;
@@ -162,8 +163,11 @@ public class LuiImage : LuiLayout
         if (!Visible)
             return;
 
-        float x = op.CanvasLocation.X + op.CanvasSize.Width * Docking.X + Position.X - Size.Width * Pivot.X;
-        float y = op.CanvasLocation.Y + op.CanvasSize.Height * Docking.Y + Position.Y - Size.Height * Pivot.Y;
+        var w = GetWidth();
+        var h = GetHeight();
+
+        float x = op.CanvasLocation.X + op.CanvasSize.Width * Docking.X + Position.X - w * Pivot.X;
+        float y = op.CanvasLocation.Y + op.CanvasSize.Height * Docking.Y + Position.Y - h * Pivot.Y;
 
         try
         {
@@ -180,10 +184,10 @@ public class LuiImage : LuiLayout
             if (ImageRenderMode == ImageRenderMode.Default)
             {
                 if (Alpha < 255)
-                    g.DrawImage(_image, Rectangle.FromLTRB((int)x, (int)y, (int)(x + Size.Width), (int)(y + Size.Height)), 0, 0, _image.Width, _image.Height, GraphicsUnit.Pixel, attributes);
+                    g.DrawImage(_image, Rectangle.FromLTRB((int)x, (int)y, (int)(x + w), (int)(y + h)), 0, 0, _image.Width, _image.Height, GraphicsUnit.Pixel, attributes);
                 else
                 {
-                    g.DrawImage(_image, RectangleF.FromLTRB(x, y, x + Size.Width, y + Size.Height));
+                    g.DrawImage(_image, RectangleF.FromLTRB(x, y, x + w, y + h));
                 }
             }
             else if (ImageRenderMode == ImageRenderMode.Unscaled)
@@ -198,19 +202,19 @@ public class LuiImage : LuiLayout
             else if (ImageRenderMode == ImageRenderMode.Fill || ImageRenderMode == ImageRenderMode.Clamp)
             {
                 float rate = (float)_image.Width / _image.Height;
-                float rate_d = (float)Size.Width / Size.Height;
+                float rate_d = (float)w / h;
                 if (ImageRenderMode == ImageRenderMode.Fill && rate < rate_d || ImageRenderMode == ImageRenderMode.Clamp && rate > rate_d)
                 {
                     float dw = _image.Width;
                     float dh = _image.Width / rate_d;
                     if (Alpha < 255)
                     {
-                        g.DrawImage(_image, Rectangle.FromLTRB((int)x, (int)y, (int)(x + Size.Width), (int)(y + Size.Height)),
+                        g.DrawImage(_image, Rectangle.FromLTRB((int)x, (int)y, (int)(x + w), (int)(y + h)),
                             0, (_image.Height - dh) / 2, dw, (_image.Height - dh) / 2 + dh, GraphicsUnit.Pixel, attributes);
                     }
                     else
                     {
-                        g.DrawImage(_image, RectangleF.FromLTRB(x, y, x + Size.Width, y + Size.Height),
+                        g.DrawImage(_image, RectangleF.FromLTRB(x, y, x + w, y + h),
                             RectangleF.FromLTRB(0, (_image.Height - dh) / 2, dw, (_image.Height - dh) / 2 + dh), GraphicsUnit.Pixel);
                     }
                 }
@@ -220,12 +224,12 @@ public class LuiImage : LuiLayout
                     float dw = _image.Height * rate_d;
                     if (Alpha < 255)
                     {
-                        g.DrawImage(_image, Rectangle.FromLTRB((int)x, (int)y, (int)(x + Size.Width), (int)(y + Size.Height)),
+                        g.DrawImage(_image, Rectangle.FromLTRB((int)x, (int)y, (int)(x + w), (int)(y + h)),
                             (_image.Width - dw) / 2, 0, (_image.Width - dw) / 2 + dw, dh, GraphicsUnit.Pixel, attributes);
                     }
                     else
                     {
-                        g.DrawImage(_image, RectangleF.FromLTRB(x, y, x + Size.Width, y + Size.Height),
+                        g.DrawImage(_image, RectangleF.FromLTRB(x, y, x + w, y + h),
                             RectangleF.FromLTRB((_image.Width - dw) / 2, 0, (_image.Width - dw) / 2 + dw, dh), GraphicsUnit.Pixel);
                     }
                 }
@@ -241,6 +245,25 @@ public class LuiImage : LuiLayout
         RenderOption next = (RenderOption)op.Clone();
         next.SetRect((int)x, (int)y, Size.Width, Size.Height);
         RenderChilds(g, next);
+    }
+
+    public override void CalcSize(Graphics g, RenderOption op)
+    {
+        if (_image == null)
+        {
+            BasePath = op.WorkPath;
+            LoadImage();
+        }
+
+        if (_image != null)
+        {
+            ImageSize = _image.Size;
+
+            if (ImageRenderMode == ImageRenderMode.Unscaled)
+                Size = new Size(_image.Width, _image.Height);
+        }
+
+        base.CalcSize(g, op);
     }
 
     protected LuiImage(LuiImage copy) : base(copy)
@@ -262,3 +285,4 @@ public class LuiImage : LuiLayout
         return new LuiImage(this);
     }
 }
+ 

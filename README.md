@@ -2,7 +2,7 @@
 
 # LunaUI
 
-[![Version](https://img.shields.io/badge/PreRelease-0.3.0-blue)](#)
+[![Version](https://img.shields.io/badge/PreRelease-0.4.0-blue)](#)
 [![C#](https://img.shields.io/badge/.NET-6.0-blue)](#)
 [![License](https://img.shields.io/static/v1?label=LICENSE&message=GNU%20GPLv3&color=lightrey)](./blob/main/LICENSE)
 
@@ -13,10 +13,10 @@ A structured image generator for your bots with a light-weight graphic ui editor
 ## Getting Started
 
 > LunaUI is under develop and (centainly) can produce bugs = =#. Please use with care () 
-> 
+>
 > Features marked with 'experimental' may be altered or removed in future.
 
-`LunaUI` is structured image generator which you can include in your bot projects for image generate purposes. 
+`LunaUI` is structured image generator which you can include in your bot projects for image generate purposes.
 
 `LunaEdit` or `LuiEditor` is a graphical editor for `LunaUI`.
 `LuiEditor` use `LunaUI` as its image rendering backend, so your editer result is fully reproducible in bots.
@@ -37,17 +37,17 @@ Image im = ui.Render();
 
 Render result:
 
-![](.blob/example_text_result.jpg)
+![result](Resource/example_text_result.jpg)
 
 ----
 
 LuiEditor render result (with layout rect)
 
-![](.blob/example_test_ui.jpg)
+![](Resource/example_test_ui.jpg)
 
 Properties for Text:
 
-![](.blob/example_text_params.jpg)
+![](Resource/example_text_params.jpg)
 
 You can see how these params work with this example.
 `Pivot=(0.5, 0.5)` and `Docking=(0.5,0.5)` makes Text centered in root layout.
@@ -113,7 +113,7 @@ Json content for text example:
 
 First set your work path from `Menu -> Edit -> Editor Options` Options:
 
-![](.blob/menu_editor_cfg.jpg)
+![](Resource/menu_editor_cfg.jpg)
 
 These configs are saved in `config.json`.
 

@@ -5,6 +5,12 @@ using Newtonsoft.Json;
 
 namespace LunaUI.Layouts;
 
+public enum PlaceMode
+{
+    XFirst,
+    YFirst,
+}
+
 [Serializable]
 public class LuiCloneTableLayout : LuiLayout
 {
@@ -27,6 +33,9 @@ public class LuiCloneTableLayout : LuiLayout
     public int PlaceHolderCopies { get; set; } = 1;
 
     [JsonIgnore]
+    public int PlaceHolderClones { get; set; } = 0;
+
+    [JsonIgnore]
     private List<LuiLayout> placeHolderLayouts = new List<LuiLayout>();
 
     public LuiCloneTableLayout()
@@ -44,6 +53,17 @@ public class LuiCloneTableLayout : LuiLayout
 
     public override void Init(RenderOption op)
     {
+        base.Init(op);
+
+        if (PlaceHolderClones > 0)
+        {
+            if (SubLayouts.Count != PlaceHolderClones)
+            {
+                CloneLayouts(PlaceHolderClones, "clone_");
+            }
+            return;
+        }
+
         if (placeHolderLayouts.Count != PlaceHolderCopies)
         {
             placeHolderLayouts.Clear();
@@ -56,8 +76,8 @@ public class LuiCloneTableLayout : LuiLayout
 
     public override void Render(Graphics g, RenderOption op)
     {
-        float x = op.CanvasLocation.X + op.CanvasSize.Width * Docking.X + Position.X - Size.Width * Pivot.X;
-        float y = op.CanvasLocation.Y + op.CanvasSize.Height * Docking.Y + Position.Y - Size.Height * Pivot.Y;
+        float x = op.CanvasLocation.X + op.CanvasSize.Width * Docking.X + Position.X - GetWidth() * Pivot.X;
+        float y = op.CanvasLocation.Y + op.CanvasSize.Height * Docking.Y + Position.Y - GetHeight() * Pivot.Y;
 
         RenderLayoutRect(g, op, x, y);
 
@@ -65,24 +85,111 @@ public class LuiCloneTableLayout : LuiLayout
         float next_y = y;
         int xt = 0;
 
-        var block_list = SubLayouts.Count > 1 ? SubLayouts : placeHolderLayouts;
-        for (int i = 0; i < block_list.Count; i++)
+        var blockList = SubLayouts.Count > 1 ? SubLayouts : placeHolderLayouts;
+        for (int i = 0; i < blockList.Count; i++)
         {
-            var child = block_list[i];
+            var child = blockList[i];
             RenderOption next = (RenderOption)op.Clone();
-            next.SetRect((int)next_x, (int)next_y, Size.Width / TableColumns, Size.Height / TableRows);
+            next.SetRect((int)next_x, (int)next_y, GetWidth() / TableColumns, GetHeight() / TableRows);
             child.Render(g, next);
 
-            next_x += child.Size.Width + ItemPaddingX;
+            next_x += child.RenderSize.Width + ItemPaddingX;
             xt++;
             if (xt >= TableColumns)
             {
                 xt = 0;
                 next_x = x;
-                next_y += child.Size.Height + ItemPaddingY;
+                next_y += child.RenderSize.Height + ItemPaddingY;
             }
         }
 
+    }
+
+    public T? GetSubLayout<T>(List<LuiLayout> list, int x, int y) where T : LuiLayout
+    {
+        var index = x + y * TableColumns;
+        if (index >= list.Count)
+            return null;
+
+        return (T)list[index];
+    }
+
+    public override void CalcSize(Graphics g, RenderOption op)
+    {
+        RenderSize = new Size(Size.Width, Size.Height);
+
+        if (SubLayouts.Count == 0)
+            return;
+
+        RenderOption next = (RenderOption)op.Clone();
+
+        for (int i = 0; i < SubLayouts.Count; i++)
+        {
+            SubLayouts[i].CalcSize(g, next);
+        }
+
+        var blockList = SubLayouts.Count > 1 ? SubLayouts : placeHolderLayouts;
+
+        var w = Size.Width;
+        var h = Size.Height;
+        var count = Math.Max(SubLayouts.Count, placeHolderLayouts.Count);
+        var xcount = count > TableColumns ? TableColumns : count;
+        var ycount = (count - 1) / TableColumns + 1;
+        var xsize = 0;
+        var ysize = 0;
+
+        if (FlowX == FlowMode.None)
+        {
+            xsize = xcount * SubLayouts[0].RenderSize.Width;
+            xsize += (xcount - 1) * ItemPaddingX;
+        }
+        else if (FlowX != FlowMode.None)
+        {
+            for (int i = 0; i < xcount; i++)
+            {
+                var l = GetSubLayout<LuiLayout>(blockList, i, 0);
+                xsize += l.RenderSize.Width;
+                xsize += l.PaddingRight;
+                xsize += ItemPaddingX;
+            }
+        }
+
+        if (FlowY == FlowMode.None)
+        {
+            ysize = ycount * SubLayouts[0].RenderSize.Height;
+            ysize += (ycount - 1) * ItemPaddingY;
+        }
+        else if (FlowY != FlowMode.None)
+        {
+            for (int i = 0; i < ycount; i++)
+            {
+                var l = GetSubLayout<LuiLayout>(blockList, 0, i);
+                ysize += l.RenderSize.Height;
+                ysize += l.PaddingBottom;
+                ysize += ItemPaddingY;
+            }
+        }
+
+        w = FlowX switch
+        {
+            FlowMode.Auto => xsize,
+            FlowMode.Shrink => Math.Min(xsize, Size.Width),
+            FlowMode.Expand => Math.Max(xsize, Size.Width),
+            _ => Size.Width,
+        };
+        h = FlowY switch
+        {
+            FlowMode.Auto => ysize,
+            FlowMode.Shrink => Math.Min(ysize, Size.Height),
+            FlowMode.Expand => Math.Max(ysize, Size.Height),
+            _ => Size.Height,
+        };
+
+        RenderSize = new Size(w + PaddingRight, h + PaddingBottom);
+
+        float x = op.CanvasLocation.X + op.CanvasSize.Width * Docking.X + Position.X - GetWidth() * Pivot.X;
+        float y = op.CanvasLocation.Y + op.CanvasSize.Height * Docking.Y + Position.Y - GetHeight() * Pivot.Y;
+        RenderLocation = new Point((int)x, (int)y);
     }
 
     public void CloneLayouts(int copies, string name_prefix = "")
@@ -98,6 +205,10 @@ public class LuiCloneTableLayout : LuiLayout
 
     protected LuiCloneTableLayout(LuiCloneTableLayout copy) : base(copy)
     {
+        TableRows = copy.TableRows;
+        TableColumns = copy.TableColumns;
+        ItemPaddingX = copy.ItemPaddingX;
+        ItemPaddingY = copy.ItemPaddingY;
     }
 
     public override LuiLayout DeepClone()

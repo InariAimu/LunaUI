@@ -26,8 +26,8 @@ public class LuiColorLayer : LuiLayout
         if (!Visible)
             return;
 
-        float x = op.CanvasLocation.X + op.CanvasSize.Width * Docking.X + Position.X - Size.Width * Pivot.X;
-        float y = op.CanvasLocation.Y + op.CanvasSize.Height * Docking.Y + Position.Y - Size.Height * Pivot.Y;
+        float x = op.CanvasLocation.X + op.CanvasSize.Width * Docking.X + Position.X - GetWidth() * Pivot.X;
+        float y = op.CanvasLocation.Y + op.CanvasSize.Height * Docking.Y + Position.Y - GetHeight() * Pivot.Y;
 
         g.FillRectangle(new SolidBrush(Color), Rectangle.FromLTRB((int)x, (int)y, (int)x + Size.Width, (int)y + Size.Height));
 

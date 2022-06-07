@@ -96,14 +96,11 @@ public partial class Editor : Form
 
     void UpdatePictureBox()
     {
-        pictureBox1.Size = uiObject.Root.Root.Size;
+        pictureBox1.Size = uiObject.Root.Root.RenderSize;
 
         try
         {
-            if (pictureBox1.Image != null)
-            {
-                pictureBox1.Image.Dispose();
-            }
+            pictureBox1.Image?.Dispose();
 
             Image im = uiObject.Render();
             pictureBox1.Image = im;

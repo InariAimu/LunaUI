@@ -113,20 +113,24 @@ public class LunaUI
 
     public LuiLayout? GetNodeByPoint(int x, int y)
     {
-
         return Root.Root.GetByPoint(x, y, Root.Option);
     }
 
     public Image Render()
     {
-        Image im = new Bitmap(Root.Root.Size.Width, Root.Root.Size.Height);
-        using (Graphics g = Graphics.FromImage(im))
-        {
-            g.SmoothingMode = SmoothingMode.HighQuality;
-            g.TextRenderingHint = System.Drawing.Text.TextRenderingHint.AntiAlias;
-            Root.Root.Init(Root.Option);
-            Root.Root.Render(g, Root.Option);
-        }
+        Image fake = new Bitmap(1, 1);
+        using Graphics fk = Graphics.FromImage(fake);
+
+        Root.Root.Init(Root.Option);
+        Root.Root.CalcSize(fk, Root.Option);
+
+        Image im = new Bitmap(Root.Root.RenderSize.Width, Root.Root.RenderSize.Height);
+        using Graphics g = Graphics.FromImage(im);
+        g.SmoothingMode = SmoothingMode.HighQuality;
+        g.TextRenderingHint = System.Drawing.Text.TextRenderingHint.AntiAlias;
+
+        Root.Option.CanvasSize = Root.Root.RenderSize;
+        Root.Root.Render(g, Root.Option);
         return im;
     }
 }

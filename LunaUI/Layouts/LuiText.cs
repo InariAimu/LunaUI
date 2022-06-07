@@ -1,6 +1,7 @@
 ﻿using System.ComponentModel;
 using System.Drawing;
 using System.Drawing.Drawing2D;
+using System.Runtime.Intrinsics.Arm;
 using System.Text;
 
 using Newtonsoft.Json;
@@ -21,6 +22,8 @@ public enum TextRenderMode
     /// String is rendered charwisely. Adjust <see cref="LuiText.CharSpacingRate"/> to control distance between characters.
     /// </summary>
     CharWise,
+
+    GenericTypographic,
 }
 
 public enum TextKerningMode
@@ -246,6 +249,19 @@ public class LuiText : LuiLayout
                         y + Size.Height + ShadeDisplacement),
                     sf);
             }
+            else if (TextRenderMode == TextRenderMode.GenericTypographic)
+            {
+                var sff = StringFormat.GenericTypographic;
+                sff.Alignment = sf.Alignment;
+                sff.LineAlignment = sf.LineAlignment;
+                gpath.AddString(strDraw, f.FontFamily, (int)f.Style, size,
+                    RectangleF.FromLTRB(
+                        x + ShadeDisplacement,
+                        y + ShadeDisplacement,
+                        x + Size.Width + ShadeDisplacement,
+                        y + Size.Height + ShadeDisplacement),
+                    sff);
+            }
             else if (TextRenderMode == TextRenderMode.CharWise)
             {
                 var strSize = MeasureString(g, strDraw, f, CharSpacingRate);
@@ -287,7 +303,15 @@ public class LuiText : LuiLayout
             if (TextRenderMode == TextRenderMode.Default)
             {
                 p.AddString(strDraw, f.FontFamily, (int)f.Style, size,
-                RectangleF.FromLTRB(x + dp, y + dp, x + Size.Width + dp, y + Size.Height + dp), sf);
+                    RectangleF.FromLTRB(x + dp, y + dp, x + Size.Width + dp, y + Size.Height + dp), sf);
+            }
+            else if(TextRenderMode == TextRenderMode.GenericTypographic)
+            {
+                var sff = StringFormat.GenericTypographic;
+                sff.Alignment = sf.Alignment;
+                sff.LineAlignment = sf.LineAlignment;
+                p.AddString(strDraw, f.FontFamily, (int)f.Style, size,
+                    RectangleF.FromLTRB(x + dp, y + dp, x + Size.Width + dp, y + Size.Height + dp), sff);
             }
             else if (TextRenderMode == TextRenderMode.CharWise)
             {
@@ -398,17 +422,7 @@ public class LuiText : LuiLayout
 
     public SizeF MeasureChar(Graphics g, char ch, Font f)
     {
-        if (_glyphSize.TryGetValue(ch, out var glyph_size))
-            return glyph_size;
-        StringBuilder sb = new(1024);
-        for (int i = 0; i < 1024; i++)
-        {
-            sb.Append(ch);
-        }
-        var sz = g.MeasureString(sb.ToString(), f);
-        sz = new(sz.Width / 1024f, sz.Height);
-        _glyphSize[ch] = sz;
-        return sz;
+        return g.MeasureString(ch.ToString(), f, 128, StringFormat.GenericTypographic);
     }
 
     public void CharWiseAddToGraphicsPath(Graphics g, GraphicsPath p, string s, Font f, float x, float y, float kerningScale)

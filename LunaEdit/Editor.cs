@@ -2,6 +2,8 @@
 
 using Newtonsoft.Json;
 
+using static System.Windows.Forms.VisualStyles.VisualStyleElement.TextBox;
+
 namespace LunaEdit;
 
 public partial class Editor : Form
@@ -35,6 +37,7 @@ public partial class Editor : Form
         contextMenuStrip1.Items.Add(new ToolStripMenuItem("Add ListLayout", null, new EventHandler((s, e) => { Add<LuiListLayout>(); })));
         contextMenuStrip1.Items.Add(new ToolStripMenuItem("Add CloneTableLayout", null, new EventHandler((s, e) => { Add<LuiCloneTableLayout>(); })));
         contextMenuStrip1.Items.Add(new ToolStripMenuItem("Add TableLayout", null, new EventHandler((s, e) => { Add<LuiTableLayout>(); })));
+        contextMenuStrip1.Items.Add(new ToolStripMenuItem("Add Rect", null, new EventHandler((s, e) => { Add<LuiRect>(); })));
 
         contextMenuStrip1.Items.Add(new ToolStripSeparator());
 
@@ -76,6 +79,24 @@ public partial class Editor : Form
 
     private void testToolStripMenuItem1_Click(object sender, EventArgs e)
     {
+        OpenFileDialog ofd = new OpenFileDialog();
+        ofd.Filter = "Lui File|*.json";
+        ofd.InitialDirectory = userConfig.WorkPath;
+        ofd.Multiselect = false;
+        if (ofd.ShowDialog() != DialogResult.OK)
+        {
+            return;
+        }
+
+        uiObject = new LunaUI.LunaUI(userConfig.WorkPath);
+        uiObject.LoadFromJson(ofd.FileName);
+        uiObject.Root.Option.CanvasSize = uiObject.Root.Root.Size;
+        uiObject.Root.Option.WorkPath = userConfig.WorkPath;
+        curr_file_path = ofd.FileName;
+
+        uiObject.GetNodeByPath<LuiCloneTableLayout>("Image/rating_table").CloneLayouts(3, "line_");
+
+        uiObject.Render()?.Save(Path.Combine(userConfig.WorkPath, "t.png"));
     }
 
     private void NewLuiToolStripMenuItem_Click(object sender, EventArgs e)
